@@ -1,0 +1,45 @@
+---
+# Embedding models configuration for RFC RAG Chunking Lab
+# Add new models here without modifying any other code.
+# All models are loaded via sentence-transformers (local, CPU-only).
+
+models:
+  - model_id: minilm
+    name: "all-MiniLM-L6-v2"
+    hf_path: "sentence-transformers/all-MiniLM-L6-v2"
+    max_seq_length: 256        # model's hard limit (word-pieces)
+    embedding_dim: 384
+    query_prefix: ""
+    passage_prefix: ""
+    normalize: true
+    description: "Compact, fast model. 256 token limit causes truncation on 512-token chunks."
+    notes: "Truncation at 256 word-pieces is a known confound — shown as a UI warning."
+
+  - model_id: bge_small
+    name: "bge-small-en-v1.5"
+    hf_path: "BAAI/bge-small-en-v1.5"
+    max_seq_length: 512
+    embedding_dim: 384
+    query_prefix: "Represent this sentence for searching relevant passages: "
+    passage_prefix: ""
+    normalize: true
+    description: "BGE small English model with query-side prefix for retrieval."
+    notes: "Only the query uses a prefix; passages are embedded as-is."
+
+  - model_id: e5_small
+    name: "e5-small-v2"
+    hf_path: "intfloat/e5-small-v2"
+    max_seq_length: 512
+    embedding_dim: 384
+    query_prefix: "query: "
+    passage_prefix: "passage: "
+    normalize: true
+    description: "E5 small model; both query and passage use task prefixes."
+    notes: "Prefixes are prepended before tokenisation and embedding."
+
+# The fixed chunking embedder used for semantic segmentation (independent of the model under test).
+# This keeps semantic chunk boundaries stable across all embedding-model experiments.
+chunking_embedder:
+  model_id: minilm
+  hf_path: "sentence-transformers/all-MiniLM-L6-v2"
+  description: "Fixed embedder for semantic chunking boundary detection only."

@@ -1,0 +1,101 @@
+---
+# Experiment configuration for RFC RAG Chunking Lab
+# Two presets: 'quick' (9 runs) and 'full' (42 runs).
+# All parameters are configurable here; nothing is hardcoded.
+
+defaults:
+  top_k: 5
+  min_overlap_chars: 40        # chars a chunk must overlap an evidence span to be relevant
+  seed: 42
+  bootstrap_resamples: 1000
+  groundedness_enabled: false   # LLM-based answer evaluation (expensive; OFF by default)
+  verified_only: false          # restrict evaluation to verified questions only
+  exclude_front_matter: true   # leaves title block, abstract, TOC out of chunk list
+
+presets:
+  quick:
+    description: "Quick validation run — 9 configurations (3 chunkers × 3 models)."
+    chunking_configs:
+      - strategy: fixed
+        chunk_tokens: 256
+        overlap_pct: 0.0
+        label: "fixed_256_0"
+      - strategy: sentence
+        chunk_tokens: 256
+        overlap_sentences: 0
+        label: "sent_256_0"
+      - strategy: semantic
+        max_tokens: 512
+        similarity_percentile: 25
+        min_tokens: 64
+        label: "semantic_default"
+    models: [minilm, bge_small, e5_small]
+
+  full:
+    description: >
+      Full grid — 14 chunking configs × 3 models = 42 runs.
+      Fixed: 6 (3 sizes × 2 overlaps), Sentence: 6 (3 sizes × 2 overlaps),
+      Semantic: 2 (default + tighter boundary).
+    chunking_configs:
+      # Fixed-size variants
+      - strategy: fixed
+        chunk_tokens: 128
+        overlap_pct: 0.0
+        label: "fixed_128_0"
+      - strategy: fixed
+        chunk_tokens: 128
+        overlap_pct: 0.15
+        label: "fixed_128_15"
+      - strategy: fixed
+        chunk_tokens: 256
+        overlap_pct: 0.0
+        label: "fixed_256_0"
+      - strategy: fixed
+        chunk_tokens: 256
+        overlap_pct: 0.15
+        label: "fixed_256_15"
+      - strategy: fixed
+        chunk_tokens: 512
+        overlap_pct: 0.0
+        label: "fixed_512_0"
+      - strategy: fixed
+        chunk_tokens: 512
+        overlap_pct: 0.15
+        label: "fixed_512_15"
+      # Sentence-level variants
+      - strategy: sentence
+        chunk_tokens: 128
+        overlap_sentences: 0
+        label: "sent_128_0"
+      - strategy: sentence
+        chunk_tokens: 128
+        overlap_sentences: 1
+        label: "sent_128_1"
+      - strategy: sentence
+        chunk_tokens: 256
+        overlap_sentences: 0
+        label: "sent_256_0"
+      - strategy: sentence
+        chunk_tokens: 256
+        overlap_sentences: 1
+        label: "sent_256_1"
+      - strategy: sentence
+        chunk_tokens: 512
+        overlap_sentences: 0
+        label: "sent_512_0"
+      - strategy: sentence
+        chunk_tokens: 512
+        overlap_sentences: 1
+        label: "sent_512_1"
+      # Semantic variants
+      - strategy: semantic
+        max_tokens: 512
+        similarity_percentile: 25
+        min_tokens: 64
+        label: "semantic_p25"
+      - strategy: semantic
+        max_tokens: 512
+        similarity_percentile: 15
+        min_tokens: 64
+        label: "semantic_p15"
+    models: [minilm, bge_small, e5_small]

@@ -1,275 +1,293 @@
+# RFC RAG Chunking Lab
 
-# Comparative Analysis of Chunking Strategies and Embedding Models on RAG Retrieval
+A reproducible research application for **"Comparative Analysis of Chunking Strategies and Embedding Models on RAG Retrieval"** using IETF RFC plain-text documents as the corpus.
 
+> **University mini-project** — Prompt Engineering & Optimization for Generative AI.
+> Every number shown in the UI comes from a measured run. No results are invented or hardcoded.
 
 ---
 
-## 1. Project Overview
+## Table of Contents
 
-Retrieval-Augmented Generation (RAG) combines information retrieval with generative AI to provide responses grounded in external documents. The quality of a RAG system depends significantly on how documents are divided into chunks, how those chunks are represented as embeddings, and how relevant information is retrieved for a given query.
+1. [Architecture](#architecture)
+2. [Quick Start — Windows](#quick-start--windows)
+3. [Quick Start — macOS / Linux](#quick-start--macoslinux)
+4. [Running Each Step](#running-each-step)
+5. [How to Add Questions](#how-to-add-questions)
+6. [How to Add Models](#how-to-add-models)
+7. [How to Add Chunkers](#how-to-add-chunkers)
+8. [Metric Definitions](#metric-definitions)
+9. [Limitations](#limitations)
+10. [Reproducibility](#reproducibility)
+11. [Assumptions](#assumptions)
 
-This project investigates the effect of different **chunking strategies, chunk sizes, overlap settings, and embedding models** on the quality and efficiency of retrieval in a RAG pipeline.
+---
 
-The experiments will use technical documentation as the primary dataset and compare retrieval configurations using quantitative evaluation metrics. The findings will help identify suitable configurations for building reliable and efficient RAG systems.
+## Architecture
 
-## 2. Problem Statement
+```mermaid
+flowchart TD
+    subgraph Data["📁 Data Layer"]
+        RAW["datasets/*.txt\n(raw RFC files, never modified)"]
+        CLEAN["data/clean/*.txt\n(cleaned, offset-stable)"]
+        EVAL["data/eval/questions.json\n(eval set, 56 questions)"]
+    end
 
-RAG systems frequently rely on default document chunking and embedding configurations without systematically evaluating whether these choices are appropriate for a particular dataset or retrieval task.
+    subgraph Core["🔧 Core ML Pipeline"]
+        PP["preprocess.py\nForm-feed removal, footer/header strip,\ntrailing WS, blank-line collapse"]
+        SEC["sections.py\nSection outline parser"]
+        CHUNK["chunkers/\nFixed-size | Sentence | Semantic"]
+        EMB["embedders.py\nMiniLM | BGE-Small | E5-Small\n(sentence-transformers, CPU)"]
+        IDX["index.py\nFAISS IndexFlatIP (exact)\nDisk-cached by config hash"]
+        RET["retrieval.py\nTop-k search + latency timing"]
+        EVAL_MOD["evaluation.py\nEvidence locator + relevance mapping"]
+        METRICS["metrics.py\nP@5, R@5, MRR, Hit@5\nContext Precision/Recall\nBootstrap CI, Wilcoxon"]
+    end
 
-Fixed-size chunking may split related information across chunks, while sentence-level and semantic chunking may preserve context differently. Similarly, embedding models may vary in their ability to retrieve relevant passages from technical documents.
+    subgraph Backend["🚀 FastAPI Backend"]
+        API["app/main.py\nREST + SSE progress"]
+        DB["SQLite\n(runs, results, questions)"]
+        JOBS["jobs.py\nBackground workers"]
+    end
 
-There is a need for a systematic comparative analysis of chunking strategies and embedding models to understand their impact on retrieval relevance, context coverage, computational cost, and retrieval latency.
+    subgraph Frontend["⚛️ React Frontend"]
+        UI["Vite + TypeScript\nTailwind + shadcn/ui"]
+        PAGES["Overview | Dataset | Experiment\nResults | Compare | Playground\nDecision Matrix | Report"]
+    end
 
-## 3. Objectives
-
-- Compare fixed-size, sentence-level, and semantic chunking strategies.
-- Investigate the effect of different chunk sizes and overlap settings.
-- Evaluate multiple embedding models, including suitable open-source models and an API-based model if resources permit.
-- Implement vector-based retrieval using FAISS and/or Chroma.
-- Measure retrieval quality using precision, recall, and other suitable retrieval metrics.
-- Evaluate retrieval latency and computational requirements.
-- Develop a comparative decision matrix recommending configurations for different technical-document retrieval scenarios.
-
-## 4. Research Questions
-
-1. How does the choice of chunking strategy affect retrieval quality?
-2. How do chunk size and overlap influence the relevance and completeness of retrieved context?
-3. How do different embedding models compare when retrieving information from technical documentation?
-4. What trade-offs exist between retrieval quality, latency, and computational cost?
-5. Which chunking and embedding configurations are most suitable for different RAG use cases?
-
-## 5. Scope
-
-The project focuses on the **retrieval component of a RAG pipeline**, with an emphasis on controlled experiments.
-
-The scope includes:
-
-- Technical-document collection and preprocessing.
-- Fixed-size, sentence-level, and semantic chunking.
-- Experiments with different chunk sizes and overlap values.
-- Embedding generation using selected models.
-- Vector indexing and similarity-based retrieval.
-- Evaluation using a predefined set of queries and relevant-document labels.
-- Comparative analysis, visualizations, and recommendations.
-
-The project does not initially aim to train a new embedding model or develop a production-scale RAG application. Generative answer evaluation may be included as an extension after the retrieval experiments are established.
-
-## 6. Proposed Methodology
-
-The project will follow these stages:
-
-1. **Dataset preparation:** Collect suitable technical documents and prepare a representative query set.
-2. **Preprocessing:** Clean documents while preserving meaningful textual structure.
-3. **Chunking:** Generate chunks using fixed-size, sentence-level, and semantic approaches.
-4. **Embedding generation:** Convert chunks into vector representations using selected embedding models.
-5. **Vector indexing:** Store embeddings in FAISS or Chroma for similarity-based retrieval.
-6. **Query retrieval:** Retrieve the top-k relevant chunks for each evaluation query.
-7. **Evaluation:** Measure retrieval quality, latency, and computational requirements.
-8. **Comparison:** Analyze the results and identify effective configurations.
-9. **Recommendation:** Prepare a decision matrix based on the observed experimental results.
-
-### Planned experimental variables
-
-| Variable | Planned configurations |
-|---|---|
-| Chunking strategy | Fixed-size, sentence-level, semantic |
-| Chunk size | Multiple predefined sizes |
-| Chunk overlap | Zero, low, and moderate overlap |
-| Embedding model | Multiple selected embedding models |
-| Vector store | FAISS and/or Chroma |
-| Retrieval parameter | Different top-k values |
-| Evaluation | Retrieval quality, latency, resource usage |
-
-The final values will be selected after the initial baseline and literature review. All comparisons will use consistent evaluation queries and document collections wherever possible.
-
-## 7. Evaluation Metrics
-
-The following metrics will be considered:
-
-- **Precision@k:** Proportion of the top-k retrieved results that are relevant.
-- **Recall@k:** Proportion of all known relevant results retrieved within the top-k results.
-- **MRR (Mean Reciprocal Rank):** Measures how highly the first relevant result appears in the ranked results.
-- **Context relevance:** Measures whether the retrieved passages are relevant to the query.
-- **Context recall:** Measures how much of the required relevant information is retrieved.
-- **Retrieval latency:** Time required to retrieve results for a query.
-- **Computational requirements:** Memory usage, embedding-generation time, and other resource costs where measurable.
-
-If a generative model is incorporated, groundedness or faithfulness can also be evaluated separately. Retrieval metrics and answer-generation metrics will not be treated as interchangeable.
-
-## 8. Initial Baseline
-
-The Week 1 baseline establishes a simple working retrieval pipeline before introducing additional experimental configurations.
-
-The initial implementation uses:
-
-- Sample technical documents.
-- Fixed-size, word-based chunking.
-- A predefined chunk-overlap value.
-- The `sentence-transformers/all-MiniLM-L6-v2` embedding model.
-- FAISS for vector similarity search.
-- Normalized embeddings and inner-product similarity.
-- Top-k retrieval for user queries.
-
-This baseline serves as a reference point for subsequent experiments. It is not the final comparative result.
-
-## 9. Technology Stack
-
-| Component | Technology |
-|---|---|
-| Programming language | Python |
-| Development environment | Visual Studio Code |
-| Embedding models | Sentence Transformers and selected alternatives |
-| Vector search | FAISS and/or Chroma |
-| Data processing | NumPy, Pandas |
-| Experimentation | Jupyter Notebook |
-| Version control | Git and GitHub |
-| Evaluation | Python-based retrieval metrics and result analysis |
-
-Open-source models will be prioritized for reproducibility. Any API-based model will be evaluated only if access, cost, and project constraints permit.
-
-## 10. Repository Structure
-
-```text
-rag-chunking-embedding-analysis/
-│
-├── data/
-│   ├── raw/                  # Original technical documents
-│   └── processed/            # Cleaned or prepared data
-│
-├── notebooks/                # Exploratory analysis and experiments
-│
-├── src/
-│   ├── baseline.py           # Initial retrieval pipeline
-│   ├── chunking.py           # Chunking strategies
-│   ├── embeddings.py         # Embedding model integration
-│   ├── retrieval.py          # Vector indexing and retrieval
-│   └── evaluation.py         # Evaluation metrics
-│
-├── evaluation/
-│   └── queries.csv           # Queries and relevance information
-│
-├── literature_review/
-│   └── papers_summary.csv    # Research-paper comparison
-│
-├── results/                  # Experimental results and figures
-│
-├── requirements.txt
-├── .gitignore
-└── README.md
+    RAW --> PP --> CLEAN
+    CLEAN --> SEC
+    CLEAN --> CHUNK
+    CHUNK --> EMB --> IDX --> RET
+    EVAL --> EVAL_MOD --> METRICS
+    RET --> METRICS
+    METRICS --> DB
+    API --> DB
+    API --> JOBS
+    JOBS --> Core
+    Frontend --> API
 ```
 
-The structure represents the planned organization. Modules will be added as the corresponding features are implemented.
+---
 
-## 11. Installation and Setup
+## Quick Start — Windows
 
 ### Prerequisites
+- Python 3.11 (from python.org)
+- Node.js 20+ (from nodejs.org)
+- Git
 
-- Python 3.11 recommended for the initial environment.
-- Git.
-- Visual Studio Code.
-- A GitHub account.
-
-### Step 1: Clone the repository
-
-```bash
-git clone https://github.com/YOUR-USERNAME/rag-chunking-embedding-analysis.git
-cd rag-chunking-embedding-analysis
-```
-
-Replace `YOUR-USERNAME` with the GitHub username that owns the repository.
-
-### Step 2: Create a virtual environment
-
-```bash
-python -m venv .venv
-```
-
-Activate it in Windows PowerShell:
+### Setup
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
+# 1. Clone and enter the repo
+git clone <repo-url>
+cd RAG-chunking-embedding-analysis
+
+# 2. Create and activate a virtual environment
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+# 3. Install Python dependencies
+pip install -r requirements.txt
+
+# 4. Download NLTK data
+python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab')"
+
+# 5. Install frontend dependencies
+cd frontend
+npm install
+cd ..
+
+# 6. Copy environment template
+copy .env.example .env
+# Edit .env if you want LLM-based groundedness evaluation
+
+# 7. Start both servers
+.\scripts\dev.ps1
 ```
 
-### Step 3: Install dependencies
+### Running steps individually
 
-```bash
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+```powershell
+# Preprocess raw RFCs → data/clean/
+python preprocess.py
+
+# Validate evaluation questions
+python -m app.cli validate-questions
+
+# Run the quick experiment preset
+python -m app.cli run --preset quick
+
+# Generate a report
+python -m app.cli report
 ```
-
-### Step 4: Run the baseline
-
-```bash
-python src/baseline.py
-```
-
-The initial baseline accepts a query and displays the highest-ranked retrieved chunks, their source documents, similarity scores, and retrieval time.
-
-The first run may require downloading the embedding model.
-
-## 12. Team Responsibilities
-
-All four members will contribute to the literature review, project discussions, evaluation design, and review presentations. The following assignments identify primary responsibilities.
-
-| Member | Primary responsibility |
-|---|---|
-| Member 1 | Literature survey, research gap, and problem formulation |
-| Member 2 | Dataset preparation, preprocessing, and chunking strategies |
-| Member 3 | Embedding models, vector indexing, and retrieval implementation |
-| Member 4 | Evaluation, experiment integration, result visualization, and documentation |
-
-Responsibilities may overlap as required for integration, testing, and final analysis. Each member will document their contributions through GitHub commits, issues, and pull requests.
-
-## 13. Project Plan
-
-### Week 1 – Problem Definition and Baseline
-
-- Finalize the research problem and objectives.
-- Review relevant research papers.
-- Establish the GitHub repository and development environment.
-- Prepare initial technical documents and evaluation queries.
-- Implement and test a fixed-size chunking baseline.
-
-### Subsequent Weeks – Implementation and Evaluation
-
-- Expand the dataset and evaluation queries.
-- Implement additional chunking strategies.
-- Integrate and compare embedding models.
-- Run controlled retrieval experiments.
-- Calculate evaluation metrics and record latency.
-- Analyze results and prepare visualizations.
-- Develop the decision matrix and complete the IEEE-style report.
-
-The detailed schedule will be refined according to faculty review requirements and the team's implementation progress.
-
-## 14. Expected Deliverables
-
-- A documented literature review and research gap.
-- A working baseline retrieval pipeline.
-- Implementations of the selected chunking strategies.
-- Experiments comparing embedding models.
-- A reproducible evaluation dataset and query set.
-- Quantitative experiment results and visualizations.
-- A comparative decision matrix with evidence-based recommendations.
-- A final IEEE-format project report and review presentation.
-
-## 15. Reproducibility and Limitations
-
-To support fair comparisons, experiments will record the dataset version, chunking configuration, embedding model, retrieval parameters, evaluation queries, and relevant runtime conditions.
-
-Results may depend on the document collection, query distribution, model version, hardware, and implementation choices. Conclusions will therefore be limited to the tested configurations and documented experimental conditions.
-
-## 16. References
-
-1. P. Lewis et al., “Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks,” *Advances in Neural Information Processing Systems*, 2020. [Paper](https://arxiv.org/abs/2005.11401)
-2. N. Reimers and I. Gurevych, “Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks,” *Proceedings of EMNLP-IJCNLP*, 2019. [Paper](https://arxiv.org/abs/1908.10084)
-3. N. Thakur et al., “BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models,” 2021. [Paper](https://arxiv.org/abs/2104.08663)
-4. N. Muennighoff et al., “MTEB: Massive Text Embedding Benchmark,” *Proceedings of EACL*, 2023. [Paper](https://arxiv.org/abs/2210.07316)
-5. G. Izacard et al., “Unsupervised Dense Information Retrieval with Contrastive Learning,” 2021. [Paper](https://arxiv.org/abs/2112.09118)
-
-Additional references on semantic chunking, chunk size, and RAG evaluation will be incorporated as the literature review progresses.
 
 ---
 
-**Project status:** Week 1 — Initial setup, literature review, and baseline implementation.  
-**Note:** Experimental comparisons and recommendations will be reported only after the relevant experiments have been conducted.
+## Quick Start — macOS / Linux
+
+### Prerequisites
+- Python 3.11 (`brew install python@3.11` or `pyenv install 3.11`)
+- Node.js 20+ (`brew install node` or `nvm install 20`)
+
+### Setup
+
+```bash
+# 1. Clone and enter the repo
+git clone <repo-url>
+cd RAG-chunking-embedding-analysis
+
+# 2. Create and activate a virtual environment
+python3.11 -m venv .venv
+source .venv/bin/activate
+
+# 3. Install Python dependencies
+pip install -r requirements.txt
+
+# 4. Download NLTK data
+python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab')"
+
+# 5. Install frontend dependencies
+cd frontend && npm install && cd ..
+
+# 6. Copy environment template
+cp .env.example .env
+
+# 7. Start both servers
+bash scripts/dev.sh
+```
+
+---
+
+## Running Each Step
+
+| Step | Command | Output |
+|------|---------|--------|
+| Preprocess RFCs | `python preprocess.py` | `data/clean/*.txt` |
+| Validate questions | `python -m app.cli validate-questions` | Console report |
+| Quick run (9 configs) | `python -m app.cli run --preset quick` | `results/` |
+| Full run (42 configs) | `python -m app.cli run --preset full` | `results/` |
+| Verified-only run | `python -m app.cli run --preset quick --verified-only` | `results/` |
+| Generate report | `python -m app.cli report` | `results/report.*` |
+| Start API server | `uvicorn app.main:app --reload` (in `backend/`) | http://localhost:8000 |
+| Start frontend | `npm run dev` (in `frontend/`) | http://localhost:5173 |
+
+---
+
+## How to Add Questions
+
+1. Open `data/eval/questions.json`.
+2. Add an entry following the schema (see `data/eval/questions.json` for examples).
+3. Run `python -m app.cli validate-questions` — it will check that every `evidence[].quote` exists verbatim in the cleaned text.
+4. Fix any validation errors (usually whitespace normalisation issues).
+5. Set `verified: true` after human review in the UI's **Review Mode** page.
+
+**Rules for question quality:**
+- Evidence must be a *verbatim* 1-3 sentence quote from the cleaned text.
+- Question wording must NOT copy phrases from the evidence (paraphrase).
+- No questions answerable from the title/heading alone.
+
+---
+
+## How to Add Models
+
+Edit `configs/models.yaml` and add an entry:
+
+```yaml
+- model_id: my_model
+  name: "my-model-name"
+  hf_path: "org/model-name"          # HuggingFace model path
+  max_seq_length: 512                 # model's native token limit
+  embedding_dim: 768
+  query_prefix: "query: "            # "" if none
+  passage_prefix: "passage: "        # "" if none
+  normalize: true
+  description: "Brief description."
+  notes: "Any caveats."
+```
+
+Then reference `my_model` in `configs/experiment.yaml` under `models:`.
+
+> **Note:** Models are downloaded on first use from HuggingFace Hub.
+> CPU-only inference is used throughout. Add the model to `configs/experiment.yaml` to include it in runs.
+
+---
+
+## How to Add Chunkers
+
+1. Create `backend/app/core/chunkers/my_chunker.py` implementing the `BaseChunker` interface:
+
+```python
+from .base import BaseChunker, Chunk
+
+class MyChunker(BaseChunker):
+    strategy = "my_strategy"
+
+    def chunk(self, text: str, doc_id: str) -> list[Chunk]:
+        ...  # return list of Chunk objects with all required fields
+```
+
+2. Register it in `backend/app/core/chunkers/__init__.py`.
+3. Add a configuration entry to `configs/experiment.yaml`.
+4. Write tests in `backend/tests/test_chunkers.py`.
+
+---
+
+## Metric Definitions
+
+| Metric | Definition |
+|--------|-----------|
+| **Precision@k** | Fraction of top-k retrieved chunks that are relevant. |
+| **Recall@k** | Fraction of relevant chunks (for this query) retrieved in top-k. |
+| **MRR** | Mean Reciprocal Rank — mean of 1/rank for the first relevant chunk. |
+| **Hit@k** | 1 if at least one relevant chunk is in top-k, else 0. |
+| **Context Precision** | RAGAS-style rank-weighted precision: mean of P@j taken at each rank j where the chunk is relevant. |
+| **Context Recall** | Fraction of gold evidence characters covered by the union of retrieved chunks. |
+| **Answer Groundedness** | (Optional) Fraction of answer atomic claims supported by retrieved context. Uses a constant LLM judge; not a study variable. |
+| **Bootstrap 95% CI** | 1000-resample bootstrap confidence interval on the mean, seed=42. |
+| **Wilcoxon p-value** | Paired signed-rank test comparing per-query metric values between two configurations. |
+
+**Relevance criterion:** A chunk is relevant to a query if it overlaps an evidence span by ≥ `min_overlap_chars` characters (default 40) OR fully contains the evidence span. This is configurable in `configs/experiment.yaml`.
+
+---
+
+## Limitations
+
+1. **CPU-only**: All embedding and inference runs on CPU. Expect ~1-10 min for the `quick` preset and ~1-2 hours for `full` on a modern laptop.
+2. **Small corpus**: Four RFCs (~1 MB total). Results may not generalise to larger or more diverse corpora.
+3. **all-MiniLM-L6-v2 truncation**: This model has a 256 word-piece limit. Chunks with 512 tiktoken tokens will be silently truncated by the model. The UI shows a **truncation warning** with the exact truncation rate per configuration. This is a known confound and is documented, not hidden.
+4. **Semantic chunker embedder is fixed**: The semantic chunker always uses `all-MiniLM-L6-v2` to detect boundaries, regardless of the embedding model under test. This keeps chunk boundaries identical across embedding-model experiments. See `configs/models.yaml` → `chunking_embedder`.
+5. **Evaluation questions are LLM-drafted**: All 56 questions are marked `verified: false` and `drafted_by: llm`. Human review is required before treating results as ground truth. The UI shows a banner on any result computed with unverified questions.
+6. **No distributed inference**: FAISS uses exact search (`IndexFlatIP`). ANN approximation errors do not confound latency measurements, but index build time scales with corpus × chunk count.
+7. **Answer groundedness is off by default**: Enabling it requires a running Ollama instance or an API key in `.env`.
+
+---
+
+## Reproducibility
+
+- **Default seed**: 42 (bootstrap resampling, semantic chunker random tie-breaking).
+- **Corpus hash**: SHA-256 of all cleaned texts concatenated, stored in every run manifest.
+- **Question-set hash**: SHA-256 of `data/eval/questions.json`, stored in every run manifest.
+- **Config hash**: Deterministic hash of chunking config + model ID, used as the cache key for embeddings and FAISS indexes.
+- **Library versions**: Pinned in `requirements.txt`. Run manifest includes Python version, OS info, and library versions at run time.
+- **Cache invalidation**: Any change to cleaned text, chunking config, or model invalidates the relevant cache entry. Stale cache is never served (hash mismatch raises an error).
+
+To re-run from scratch: `python -m app.cli run --preset quick --no-cache`.
+
+---
+
+## Assumptions
+
+> Items marked with ⚠️ are design decisions made where the spec was ambiguous.
+
+1. **Token counting uses tiktoken cl100k_base** for chunk boundaries and `chunk_tokens` parameters, regardless of the embedding model's own tokenizer. This ensures identical chunk boundaries across all models. The model's native tokenizer is used only for computing the truncation rate.
+2. **Relevance is binary** (a chunk either overlaps evidence by ≥ 40 chars or it doesn't). No graded relevance is used.
+3. **Recall denominator** = number of chunks in the index that overlap evidence for that query (not total evidence spans). This makes Recall@5 interpretable when evidence spans are very short.
+4. **Semantic chunker** uses cosine similarity between adjacent sentence embeddings (window=1). Similarity below the configured percentile threshold triggers a new chunk boundary.
+5. ⚠️ **Context Precision** uses the RAGAS rank-weighted formulation (mean of P@j at relevant ranks), not simple P@k.
+6. ⚠️ **Context Recall** is character-overlap-based (union of retrieved chunk spans vs. union of gold evidence spans), not token-based.
+7. ⚠️ **The semantic chunker boundary embedder** (`all-MiniLM-L6-v2`) is excluded from the embedding-model study variable to avoid confounding chunking strategy with embedding model choice.
+8. ⚠️ **56 evaluation questions** (14 per RFC) drafted by LLM and validated against the cleaned text. All start as `verified: false`. Results with unverified questions show a UI banner.
+9. **FAISS IndexFlatIP** (exact inner-product search) is used so that latency differences reflect the embedding model and chunk count, not ANN approximation.
+10. **LLM answer generation** uses the same provider/model/prompt for all runs (held constant). It is not a study variable.

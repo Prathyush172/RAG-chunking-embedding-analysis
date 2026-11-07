@@ -1,7 +1,66 @@
-.venv/
+# Python
 __pycache__/
 *.py[cod]
-.ipynb_checkpoints/
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables (never commit secrets)
 .env
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+
+# Data and artifacts (generated; not tracked)
+data/clean/
+artifacts/
+results/
+.cache/
+
+# NLTK data (downloaded at runtime)
+nltk_data/
+
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
 .DS_Store
+Thumbs.db
+
+# pytest
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Alembic
+backend/alembic/versions/*.py
+
+# SQLite databases (generated)
+*.db
+*.db-journal
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+scratch/

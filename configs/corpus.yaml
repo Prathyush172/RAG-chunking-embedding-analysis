@@ -1,0 +1,49 @@
+---
+# Corpus configuration for RFC RAG Chunking Lab
+# Maps doc_id -> file path, RFC metadata, and source URL
+# NEVER modify the raw dataset files in datasets/
+
+corpus:
+  - doc_id: tcp
+    file: datasets/tcp.txt
+    clean_file: data/clean/tcp.txt
+    rfc_number: 9293
+    title: "Transmission Control Protocol (TCP)"
+    source_url: "https://www.rfc-editor.org/rfc/rfc9293.txt"
+    retrieved_date: "2024-01-15"
+    authors: ["W. Eddy"]
+    published: "August 2022"
+    category: "Standards Track"
+
+  - doc_id: dns
+    file: datasets/dns.txt
+    clean_file: data/clean/dns.txt
+    rfc_number: 1034
+    title: "Domain Names - Concepts and Facilities"
+    source_url: "https://www.rfc-editor.org/rfc/rfc1034.txt"
+    retrieved_date: "2024-01-15"
+    authors: ["P. Mockapetris"]
+    published: "November 1987"
+    category: "Standards Track"
+
+  - doc_id: dns_implementation
+    file: datasets/dns_implementation.txt
+    clean_file: data/clean/dns_implementation.txt
+    rfc_number: 1035
+    title: "Domain Names - Implementation and Specification"
+    source_url: "https://www.rfc-editor.org/rfc/rfc1035.txt"
+    retrieved_date: "2024-01-15"
+    authors: ["P. Mockapetris"]
+    published: "November 1987"
+    category: "Standards Track"
+
+  - doc_id: http
+    file: datasets/http.txt
+    clean_file: data/clean/http.txt
+    rfc_number: 9110
+    title: "HTTP Semantics"
+    source_url: "https://www.rfc-editor.org/rfc/rfc9110.txt"
+    retrieved_date: "2024-01-15"
+    authors: ["R. Fielding", "M. Nottingham", "J. Reschke"]
+    published: "June 2022"
+    category: "Standards Track"

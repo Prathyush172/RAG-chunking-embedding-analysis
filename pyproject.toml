@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = [".", "backend"]
+addopts = "-v --tb=short"
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::pytest.PytestRemovedIn10Warning:anyio",
+]
+
+[tool.pyright]
+include = ["backend"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
