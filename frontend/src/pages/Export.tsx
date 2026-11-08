@@ -7,8 +7,6 @@ import {
   FileCode,
   FileSpreadsheet,
   FileText,
-  Layers,
-  Sparkles,
 } from "lucide-react";
 import { api } from "../lib/api";
 import { useExperiment } from "../context/ExperimentContext";

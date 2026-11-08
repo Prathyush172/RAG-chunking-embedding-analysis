@@ -73,7 +73,7 @@ export const Playground: React.FC = () => {
   };
 
   const resultData = queryMutation.data as PlaygroundResponse | undefined;
-  const blocks: PlaygroundConfigResult[] = resultData?.results || [];
+  const blocks: PlaygroundConfigResult[] = resultData?.configs || [];
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -248,7 +248,7 @@ export const Playground: React.FC = () => {
                   {block.chunk_config} + {block.model_id}
                 </div>
                 <div className="text-[11px] text-slate-500 font-mono mt-0.5 flex items-center justify-between">
-                  <span>Latency: {block.latency_ms.toFixed(1)} ms</span>
+                  <span>Latency: {(block.latency_ms ?? 0).toFixed(1)} ms</span>
                   {block.status === "building" && (
                     <span className="text-amber-500 font-bold flex items-center gap-1">
                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -260,7 +260,7 @@ export const Playground: React.FC = () => {
 
               {/* Retrieved Chunks list */}
               <div className="flex-1 p-4 space-y-3 overflow-y-auto max-h-[600px]">
-                {block.retrieved_chunks.map((chunk: RetrievedChunkDetail, cIdx: number) => (
+                {(block.retrieved_chunks || []).map((chunk: RetrievedChunkDetail, cIdx: number) => (
                   <div
                     key={cIdx}
                     className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 text-xs space-y-2"
@@ -274,7 +274,7 @@ export const Playground: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="text-[11px] font-mono text-slate-500 truncate" title={chunk.section}>
+                    <div className="text-[11px] font-mono text-slate-500 truncate" title={chunk.section || undefined}>
                       <strong>Doc:</strong> {chunk.doc_id.toUpperCase()} | <strong>Sec:</strong> {chunk.section}
                     </div>
 

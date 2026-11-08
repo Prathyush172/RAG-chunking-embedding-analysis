@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -11,7 +11,6 @@ import {
   Download,
   Upload,
   ArrowRight,
-  ExternalLink,
   ChevronRight,
   X,
 } from "lucide-react";
@@ -250,7 +249,7 @@ export const Dataset: React.FC = () => {
                   <strong>Chars:</strong> {currentDoc.char_count.toLocaleString()}
                 </span>
                 <span>
-                  <strong>Lines:</strong> {currentDoc.line_count.toLocaleString()}
+                  <strong>Sections:</strong> {currentDoc.section_count.toLocaleString()}
                 </span>
               </div>
             )}
@@ -484,7 +483,7 @@ export const Dataset: React.FC = () => {
                           {q.difficulty}
                         </td>
                         <td className="px-4 py-3 font-mono text-[11px]">
-                          {q.lexical_overlap_run} words / {q.lexical_overlap_jaccard.toFixed(2)}
+                          {q.lexical_overlap_run} words / {(q.lexical_overlap_jaccard ?? 0).toFixed(2)}
                           {q.flagged_too_easy && (
                             <span className="ml-1 text-rose-500 font-bold" title="Flagged: too easy overlap">
                               *
@@ -695,7 +694,7 @@ export const Dataset: React.FC = () => {
                       </div>
                       <div>
                         <span className="font-semibold text-slate-500">Overlap Jaccard:</span>
-                        <div className="font-mono">{viewingQuestion.lexical_overlap_jaccard.toFixed(3)}</div>
+                        <div className="font-mono">{(viewingQuestion.lexical_overlap_jaccard ?? 0).toFixed(3)}</div>
                       </div>
                       <div>
                         <span className="font-semibold text-slate-500">Verification:</span>

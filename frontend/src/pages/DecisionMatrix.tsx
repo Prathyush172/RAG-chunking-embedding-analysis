@@ -23,16 +23,16 @@ export const DecisionMatrix: React.FC = () => {
     queryFn: () => api.getDecisionMatrixPresets(),
   });
 
-  // Weights state
+  // Weights state matching backend DecisionMatrixWeights schema
   const [weights, setWeights] = useState<DecisionMatrixWeights>({
-    w_quality: 0.3,
-    w_groundedness: 0.2,
-    w_latency: 0.25,
-    w_storage: 0.15,
-    w_preprocessing: 0.1,
+    hit_at_k: 0.3,
+    groundedness: 0.2,
+    latency: 0.25,
+    index_size: 0.15,
+    cost: 0.1,
   });
 
-  // Compute Mutation
+  // Compute Query
   const { data: matrixData } = useQuery({
     queryKey: ["decision-matrix", activeExperiment?.id, weights],
     queryFn: () => (activeExperiment?.id ? api.computeDecisionMatrix(weights, activeExperiment.id) : null),
@@ -46,7 +46,7 @@ export const DecisionMatrix: React.FC = () => {
   };
 
   const handleSliderChange = (field: keyof DecisionMatrixWeights, val: number) => {
-    setWeights({ ...weights, [field]: val });
+    setWeights((prev) => ({ ...prev, [field]: val }));
   };
 
   const ranked: DecisionMatrixRankItem[] = matrixData?.ranked_results || [];
@@ -54,11 +54,11 @@ export const DecisionMatrix: React.FC = () => {
 
   // Radar chart data for top 3
   const radarDimensions = [
-    { key: "quality", label: "Quality (Hit/MRR)" },
+    { key: "hit_at_k", label: "Quality (Hit@5)" },
     { key: "groundedness", label: "Groundedness" },
     { key: "latency", label: "Speed (Low Latency)" },
-    { key: "storage", label: "Compact Storage" },
-    { key: "preprocessing", label: "Fast Ingestion" },
+    { key: "index_size", label: "Compact Storage" },
+    { key: "cost", label: "Cost Efficiency" },
   ];
 
   const radarData = radarDimensions.map((dim) => {
@@ -113,16 +113,16 @@ export const DecisionMatrix: React.FC = () => {
           {/* Quality Slider */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">Quality Weight</span>
-              <span className="font-mono font-bold text-indigo-600">{weights.w_quality.toFixed(2)}</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">Quality (Hit@5)</span>
+              <span className="font-mono font-bold text-indigo-600">{(weights.hit_at_k ?? 0).toFixed(2)}</span>
             </div>
             <input
               type="range"
               min={0}
               max={1}
               step={0.05}
-              value={weights.w_quality}
-              onChange={(e) => handleSliderChange("w_quality", Number(e.target.value))}
+              value={weights.hit_at_k ?? 0}
+              onChange={(e) => handleSliderChange("hit_at_k", Number(e.target.value))}
               className="w-full accent-indigo-600"
             />
           </div>
@@ -131,15 +131,15 @@ export const DecisionMatrix: React.FC = () => {
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
               <span className="font-semibold text-slate-700 dark:text-slate-300">Groundedness</span>
-              <span className="font-mono font-bold text-indigo-600">{weights.w_groundedness.toFixed(2)}</span>
+              <span className="font-mono font-bold text-indigo-600">{(weights.groundedness ?? 0).toFixed(2)}</span>
             </div>
             <input
               type="range"
               min={0}
               max={1}
               step={0.05}
-              value={weights.w_groundedness}
-              onChange={(e) => handleSliderChange("w_groundedness", Number(e.target.value))}
+              value={weights.groundedness ?? 0}
+              onChange={(e) => handleSliderChange("groundedness", Number(e.target.value))}
               className="w-full accent-indigo-600"
             />
           </div>
@@ -148,15 +148,15 @@ export const DecisionMatrix: React.FC = () => {
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
               <span className="font-semibold text-slate-700 dark:text-slate-300">Latency Weight</span>
-              <span className="font-mono font-bold text-indigo-600">{weights.w_latency.toFixed(2)}</span>
+              <span className="font-mono font-bold text-indigo-600">{(weights.latency ?? 0).toFixed(2)}</span>
             </div>
             <input
               type="range"
               min={0}
               max={1}
               step={0.05}
-              value={weights.w_latency}
-              onChange={(e) => handleSliderChange("w_latency", Number(e.target.value))}
+              value={weights.latency ?? 0}
+              onChange={(e) => handleSliderChange("latency", Number(e.target.value))}
               className="w-full accent-indigo-600"
             />
           </div>
@@ -165,32 +165,32 @@ export const DecisionMatrix: React.FC = () => {
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
               <span className="font-semibold text-slate-700 dark:text-slate-300">Storage / Memory</span>
-              <span className="font-mono font-bold text-indigo-600">{weights.w_storage.toFixed(2)}</span>
+              <span className="font-mono font-bold text-indigo-600">{(weights.index_size ?? 0).toFixed(2)}</span>
             </div>
             <input
               type="range"
               min={0}
               max={1}
               step={0.05}
-              value={weights.w_storage}
-              onChange={(e) => handleSliderChange("w_storage", Number(e.target.value))}
+              value={weights.index_size ?? 0}
+              onChange={(e) => handleSliderChange("index_size", Number(e.target.value))}
               className="w-full accent-indigo-600"
             />
           </div>
 
-          {/* Preprocessing Slider */}
+          {/* Cost Slider */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">Ingestion Speed</span>
-              <span className="font-mono font-bold text-indigo-600">{weights.w_preprocessing.toFixed(2)}</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">Cost Efficiency</span>
+              <span className="font-mono font-bold text-indigo-600">{(weights.cost ?? 0).toFixed(2)}</span>
             </div>
             <input
               type="range"
               min={0}
               max={1}
               step={0.05}
-              value={weights.w_preprocessing}
-              onChange={(e) => handleSliderChange("w_preprocessing", Number(e.target.value))}
+              value={weights.cost ?? 0}
+              onChange={(e) => handleSliderChange("cost", Number(e.target.value))}
               className="w-full accent-indigo-600"
             />
           </div>

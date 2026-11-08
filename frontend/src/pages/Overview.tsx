@@ -256,7 +256,7 @@ export const Overview: React.FC = () => {
                 <th className="px-6 py-3">RFC #</th>
                 <th className="px-6 py-3">Title</th>
                 <th className="px-6 py-3">Characters</th>
-                <th className="px-6 py-3">Lines</th>
+                <th className="px-6 py-3">Sections</th>
                 <th className="px-6 py-3">Action</th>
               </tr>
             </thead>
@@ -271,7 +271,7 @@ export const Overview: React.FC = () => {
                     {doc.title}
                   </td>
                   <td className="px-6 py-3 font-mono">{doc.char_count.toLocaleString()}</td>
-                  <td className="px-6 py-3 font-mono">{doc.line_count.toLocaleString()}</td>
+                  <td className="px-6 py-3 font-mono">{doc.section_count.toLocaleString()}</td>
                   <td className="px-6 py-3">
                     <Link
                       to={`/dataset?doc_id=${doc.doc_id}`}

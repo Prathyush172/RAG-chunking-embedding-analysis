@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   Play,
-  RotateCcw,
   StopCircle,
-  Clock,
-  Cpu,
-  Layers,
   Terminal,
-  CheckCircle,
   AlertTriangle,
   Trash2,
-  Check,
 } from "lucide-react";
 import {
   api,
   ExperimentCreateRequest,
   EstimateRequest,
-  ExperimentResponse,
 } from "../lib/api";
 import { useExperiment } from "../context/ExperimentContext";
 
@@ -44,7 +37,6 @@ const ALL_MODELS = [
 ];
 
 export const Experiments: React.FC = () => {
-  const queryClient = useQueryClient();
   const { experiments, activeExperimentId, setActiveExperimentId, refetch: refetchExperiments } =
     useExperiment();
 
@@ -66,12 +58,25 @@ export const Experiments: React.FC = () => {
   const activeExpForLogs = runningExp || experiments[0];
 
   // Estimate Query
+  const resolvedConfigs =
+    selectedPreset === "quick"
+      ? ["fixed_256_0", "sent_256_0"]
+      : selectedPreset === "full"
+      ? ["fixed_128_0", "fixed_128_15", "fixed_256_0", "fixed_256_15", "fixed_512_0", "fixed_512_15", "sent_128_0", "sent_256_0", "sent_512_0"]
+      : customConfigs;
+
+  const resolvedModels =
+    selectedPreset === "quick"
+      ? ["minilm", "bge_small"]
+      : selectedPreset === "full"
+      ? ["minilm", "bge_small", "e5_small"]
+      : customModels;
+
   const estimateReq: EstimateRequest = {
-    preset: selectedPreset === "custom" ? undefined : selectedPreset,
-    chunk_configs: selectedPreset === "custom" ? customConfigs : undefined,
-    models: selectedPreset === "custom" ? customModels : undefined,
+    chunk_configs: resolvedConfigs,
+    models: resolvedModels,
     k: kValue,
-    verified_only: verifiedOnly,
+    questions_count: verifiedOnly ? 40 : 56,
   };
 
   const { data: estimate } = useQuery({
@@ -408,13 +413,6 @@ export const Experiments: React.FC = () => {
                 </div>
 
                 <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                  <div className="text-[11px] text-slate-500 font-sans">Total Queries</div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
-                    {estimate.total_queries}
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
                   <div className="text-[11px] text-slate-500 font-sans">Estimated Time</div>
                   <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">
                     ~{Math.round(estimate.total_estimated_sec)}s
@@ -422,9 +420,16 @@ export const Experiments: React.FC = () => {
                 </div>
 
                 <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                  <div className="text-[11px] text-slate-500 font-sans">Memory Est.</div>
+                  <div className="text-[11px] text-slate-500 font-sans">Index Build Time</div>
                   <div className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
-                    ~{estimate.estimated_memory_mb} MB
+                    ~{Math.round(estimate.estimated_indexing_sec)}s
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+                  <div className="text-[11px] text-slate-500 font-sans">Index Size Est.</div>
+                  <div className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
+                    ~{estimate.estimated_index_size_mb.toFixed(1)} MB
                   </div>
                 </div>
               </div>
@@ -529,7 +534,7 @@ export const Experiments: React.FC = () => {
                       {exp.verified_questions_count} / {exp.unverified_questions_count}
                     </td>
                     <td className="px-4 py-3 text-slate-500">
-                      {new Date(exp.created_at).toLocaleString()}
+                      {new Date(exp.created_at || "").toLocaleString()}
                     </td>
                     <td className="px-4 py-3 text-right space-x-2">
                       {exp.status === "cancelled" && (
