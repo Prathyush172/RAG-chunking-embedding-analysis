@@ -17,7 +17,12 @@ def get_corpus_meta() -> dict:
         return {}
     with open(corpus_yaml, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
-        return data.get("corpus", {}) or data.get("documents", {})
+    raw_corpus = data.get("corpus") or data.get("documents") or {}
+    if isinstance(raw_corpus, list):
+        return {item["doc_id"]: item for item in raw_corpus if "doc_id" in item}
+    elif isinstance(raw_corpus, dict):
+        return raw_corpus
+    return {}
 
 
 @router.get("/documents", response_model=list[DocumentSummary])
