@@ -69,7 +69,7 @@ def get_document_sections(doc_id: str) -> list[SectionOutlineItem]:
     secs = parse_sections(text)
     return [
         SectionOutlineItem(
-            id=s.id,
+            id=s.number,
             number=s.number,
             title=s.title,
             level=s.level,
