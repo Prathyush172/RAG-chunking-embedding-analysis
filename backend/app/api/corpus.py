@@ -1,5 +1,6 @@
 import yaml
 from pathlib import Path
+from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 from app.core.sections import parse_sections, find_section_for_offset
 from app.schemas import DocumentSummary, SectionOutlineItem, SearchMatchItem
@@ -53,11 +54,45 @@ def list_documents() -> list[DocumentSummary]:
 
 
 @router.get("/documents/{doc_id}/text")
-def get_document_text(doc_id: str) -> dict[str, str]:
+def get_document_text(
+    doc_id: str,
+    start: int | None = Query(None, ge=0),
+    end: int | None = Query(None, ge=0),
+) -> dict[str, Any]:
     doc_file = CLEAN_DIR / f"{doc_id}.txt"
     if not doc_file.exists():
         raise HTTPException(status_code=404, detail=f"Document '{doc_id}' not found")
-    return {"doc_id": doc_id, "text": doc_file.read_text(encoding="utf-8")}
+    full_text = doc_file.read_text(encoding="utf-8")
+    sliced = full_text[start:end] if (start is not None or end is not None) else full_text
+    return {
+        "doc_id": doc_id,
+        "text": sliced,
+        "total_chars": len(full_text),
+        "start": start or 0,
+        "end": end if end is not None else len(full_text),
+    }
+
+
+@router.get("/documents/{doc_id}/line-index")
+def get_document_line_index(doc_id: str) -> dict[str, Any]:
+    doc_file = CLEAN_DIR / f"{doc_id}.txt"
+    if not doc_file.exists():
+        raise HTTPException(status_code=404, detail=f"Document '{doc_id}' not found")
+    text = doc_file.read_text(encoding="utf-8")
+    offsets = [0]
+    pos = 0
+    while True:
+        pos = text.find("\n", pos)
+        if pos == -1:
+            break
+        offsets.append(pos + 1)
+        pos += 1
+    return {
+        "doc_id": doc_id,
+        "total_lines": len(offsets),
+        "total_chars": len(text),
+        "line_offsets": offsets,
+    }
 
 
 @router.get("/documents/{doc_id}/sections", response_model=list[SectionOutlineItem])

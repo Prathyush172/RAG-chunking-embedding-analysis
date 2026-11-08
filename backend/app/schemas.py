@@ -87,6 +87,15 @@ class QuestionSchema(BaseModel):
     lexical_overlap_run: int | None = None
     lexical_overlap_jaccard: float | None = None
     flagged_too_easy: bool = False
+    verified_at: str | None = None
+
+
+class QuestionReviewRequest(BaseModel):
+    verdict: Literal["approve", "reject", "edit"]
+    notes: str | None = None
+    reviewer: str | None = None
+    question: str | None = None
+    reference_answer: str | None = None
 
 
 class QuestionCreateSchema(BaseModel):
@@ -261,7 +270,10 @@ class ResultSummaryItem(BaseModel):
 
 class ResultSummaryResponse(BaseModel):
     experiment_id: str
-    has_unverified: bool
+    unverified_included: bool = True
+    has_unverified: bool = True
+    verified_questions_count: int = 0
+    unverified_questions_count: int = 0
     notice: str | None = None
     rows: list[ResultSummaryItem]
 
@@ -325,19 +337,40 @@ class MetricDeltaItem(BaseModel):
 
 class CompareResponse(BaseModel):
     experiment_id: str
+    unverified_included: bool = True
+    has_unverified: bool = True
+    verified_questions_count: int = 0
+    unverified_questions_count: int = 0
     base_label: str
     target_label: str
     metrics: list[MetricDeltaItem]
     win_loss_tie: dict[str, int]
+    note: str | None = None
 
 
 # -----------------------------------------------------------------------------
 # Playground
 # -----------------------------------------------------------------------------
+class PlaygroundConfigItem(BaseModel):
+    chunk_config: str
+    model_id: str
+
+
+class PlaygroundConfigResult(BaseModel):
+    chunk_config: str
+    model_id: str
+    latency_ms: float = 0.0
+    status: str = "ready"  # ready, building
+    job_id: str | None = None
+    retrieved_chunks: list[RetrievedChunkDetail] = Field(default_factory=list)
+    gold_overlap: dict[str, Any] | None = None
+
+
 class PlaygroundRequest(BaseModel):
     query: str
-    chunk_config: str = "fixed_256_0"
-    model_id: str = "minilm"
+    chunk_config: str | None = None
+    model_id: str | None = None
+    configs: list[PlaygroundConfigItem] | None = None
     k: int = 5
 
 
@@ -356,12 +389,14 @@ class RetrievedChunkDetail(BaseModel):
 
 class PlaygroundResponse(BaseModel):
     query: str
-    chunk_config: str
-    model_id: str
     k: int
-    latency_ms: float
-    retrieved_chunks: list[RetrievedChunkDetail]
+    configs: list[PlaygroundConfigResult] = Field(default_factory=list)
     matched_gold_question: QuestionSchema | None = None
+    # Backward compatibility fields for single-config responses
+    chunk_config: str | None = None
+    model_id: str | None = None
+    latency_ms: float | None = None
+    retrieved_chunks: list[RetrievedChunkDetail] = Field(default_factory=list)
     gold_overlap: dict[str, Any] | None = None
 
 
@@ -376,6 +411,7 @@ class DecisionMatrixWeights(BaseModel):
     latency: float = 0.10
     index_size: float = 0.05
     cost: float = 0.10
+    groundedness: float = 0.0
 
 
 class DecisionMatrixRankItem(BaseModel):

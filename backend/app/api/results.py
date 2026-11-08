@@ -67,7 +67,10 @@ def get_experiment_summary(exp_id: str, db: Session = Depends(get_db)) -> Result
 
     return ResultSummaryResponse(
         experiment_id=exp_id,
+        unverified_included=exp.has_unverified,
         has_unverified=exp.has_unverified,
+        verified_questions_count=exp.verified_questions_count or 0,
+        unverified_questions_count=exp.unverified_questions_count or 0,
         notice=notice,
         rows=rows,
     )

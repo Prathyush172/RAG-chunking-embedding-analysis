@@ -15,9 +15,14 @@ from app.core.retrieval import RetrievalPipeline
 from app.schemas import (
     PlaygroundRequest,
     PlaygroundResponse,
+    PlaygroundConfigItem,
+    PlaygroundConfigResult,
     RetrievedChunkDetail,
     QuestionSchema,
 )
+from app.core.index import compute_cache_key, compute_corpus_hash
+from dataclasses import asdict
+import threading
 
 router = APIRouter(prefix="/playground", tags=["playground"])
 
@@ -47,45 +52,22 @@ def execute_playground_query(payload: PlaygroundRequest) -> PlaygroundResponse:
     if not payload.query or not payload.query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty")
 
-    c_cfg = get_chunk_config_by_label(payload.chunk_config)
+    target_configs: list[dict[str, str]] = []
+    if payload.configs:
+        target_configs = [{"chunk_config": c.chunk_config, "model_id": c.model_id} for c in payload.configs[:3]]
+    elif payload.chunk_config and payload.model_id:
+        target_configs = [{"chunk_config": payload.chunk_config, "model_id": payload.model_id}]
+    else:
+        target_configs = [{"chunk_config": "fixed_256_0", "model_id": "minilm"}]
+
     pipeline = RetrievalPipeline(clean_dir=CLEAN_DIR)
-    artifacts, _ = pipeline.get_or_build_index(chunk_config=c_cfg, model_id=payload.model_id)
-
-    ret_result = pipeline.retrieve(
-        query=payload.query,
-        chunk_config=c_cfg,
-        model_id=payload.model_id,
-        k=payload.k,
-    )
-
-    chunk_lookup = {c.chunk_id: c for c in artifacts.chunks}
-    model_cfg = pipeline.models_config[payload.model_id]
     enc = tiktoken.get_encoding("cl100k_base")
-    retrieved_details: list[RetrievedChunkDetail] = []
+    corpus_hash = compute_corpus_hash(CLEAN_DIR)
 
-    for rank, item in enumerate(ret_result.results, start=1):
-        chunk = chunk_lookup.get(item.chunk_id)
-        tok_cnt = chunk.token_count if chunk else len(enc.encode(item.text))
-        retrieved_details.append(
-            RetrievedChunkDetail(
-                rank=rank,
-                chunk_id=item.chunk_id,
-                doc_id=item.doc_id,
-                score=round(item.score, 4),
-                section=item.section,
-                token_count=tok_cnt,
-                char_start=item.char_start,
-                char_end=item.char_end,
-                text=item.text,
-                truncated=tok_cnt > model_cfg.max_seq_length,
-            )
-        )
-
-    # Check for gold question match
+    # Check for gold question match across corpus questions
     all_questions = load_questions(QUESTIONS_FILE)
     matched_q = None
     best_sim = 0.0
-
     for q in all_questions:
         if q.question.strip().lower() == payload.query.strip().lower():
             matched_q = q
@@ -96,27 +78,109 @@ def execute_playground_query(payload: PlaygroundRequest) -> PlaygroundResponse:
             if sim >= 0.7:
                 matched_q = q
 
-    gold_overlap = None
-    if matched_q:
-        relevance_mapper = RelevanceMapper()
-        relevant_chunk_ids = relevance_mapper.get_relevant_chunks(matched_q, artifacts.chunks)
-        retrieved_ids = [item.chunk_id for item in ret_result.results]
-        hits = [cid for cid in retrieved_ids if cid in relevant_chunk_ids]
-        gold_overlap = {
-            "matched_question_id": matched_q.id,
-            "relevant_chunks_in_index": len(relevant_chunk_ids),
-            "hits_in_top_k": len(hits),
-            "hit_at_k": float(len(hits) > 0),
-            "all_evidence_hit": bool(all(cid in retrieved_ids for cid in relevant_chunk_ids)),
-        }
+    config_results: list[PlaygroundConfigResult] = []
+
+    for cfg_item in target_configs:
+        c_label = cfg_item["chunk_config"]
+        m_id = cfg_item["model_id"]
+        c_cfg = get_chunk_config_by_label(c_label)
+        model_cfg = pipeline.models_config[m_id]
+
+        c_key = compute_cache_key(
+            chunk_config=c_cfg,
+            model_config=asdict(model_cfg) if hasattr(model_cfg, "__dataclass_fields__") else model_cfg,
+            corpus_hash=corpus_hash,
+            exclude_front_matter=True,
+        )
+        cache_path = pipeline.artifacts_dir / c_key
+        is_cached = cache_path.exists() and (cache_path / "index.faiss").exists() and (cache_path / "meta.json").exists()
+
+        if not is_cached:
+            # Not yet cached: trigger async background build and return building status
+            job_id = f"build_{c_label}_{m_id}"
+            threading.Thread(
+                target=pipeline.get_or_build_index,
+                args=(c_cfg, m_id, True),
+                daemon=True,
+            ).start()
+            config_results.append(
+                PlaygroundConfigResult(
+                    chunk_config=c_label,
+                    model_id=m_id,
+                    status="building",
+                    job_id=job_id,
+                    latency_ms=0.0,
+                    retrieved_chunks=[],
+                    gold_overlap=None,
+                )
+            )
+            continue
+
+        artifacts, _ = pipeline.get_or_build_index(chunk_config=c_cfg, model_id=m_id)
+        ret_result = pipeline.retrieve(
+            query=payload.query,
+            chunk_config=c_cfg,
+            model_id=m_id,
+            k=payload.k,
+        )
+
+        chunk_lookup = {c.chunk_id: c for c in artifacts.chunks}
+        retrieved_details: list[RetrievedChunkDetail] = []
+        for rank, item in enumerate(ret_result.results, start=1):
+            chunk = chunk_lookup.get(item.chunk_id)
+            tok_cnt = chunk.token_count if chunk else len(enc.encode(item.text))
+            retrieved_details.append(
+                RetrievedChunkDetail(
+                    rank=rank,
+                    chunk_id=item.chunk_id,
+                    doc_id=item.doc_id,
+                    score=round(item.score, 4),
+                    section=item.section,
+                    token_count=tok_cnt,
+                    char_start=item.char_start,
+                    char_end=item.char_end,
+                    text=item.text,
+                    truncated=tok_cnt > model_cfg.max_seq_length,
+                )
+            )
+
+        gold_overlap = None
+        if matched_q:
+            relevance_mapper = RelevanceMapper()
+            relevant_chunk_ids = relevance_mapper.get_relevant_chunks(matched_q, artifacts.chunks)
+            retrieved_ids = [item.chunk_id for item in ret_result.results]
+            hits = [cid for cid in retrieved_ids if cid in relevant_chunk_ids]
+            gold_overlap = {
+                "matched_question_id": matched_q.id,
+                "relevant_chunks_in_index": len(relevant_chunk_ids),
+                "hits_in_top_k": len(hits),
+                "hit_at_k": float(len(hits) > 0),
+                "all_evidence_hit": bool(all(cid in retrieved_ids for cid in relevant_chunk_ids)),
+            }
+
+        config_results.append(
+            PlaygroundConfigResult(
+                chunk_config=c_label,
+                model_id=m_id,
+                status="ready",
+                job_id=None,
+                latency_ms=ret_result.latency_ms,
+                retrieved_chunks=retrieved_details,
+                gold_overlap=gold_overlap,
+            )
+        )
+
+    # First config result for single-config compatibility
+    first_res = config_results[0] if config_results else None
 
     return PlaygroundResponse(
         query=payload.query,
-        chunk_config=payload.chunk_config,
-        model_id=payload.model_id,
         k=payload.k,
-        latency_ms=ret_result.latency_ms,
-        retrieved_chunks=retrieved_details,
+        configs=config_results,
         matched_gold_question=QuestionSchema(**matched_q.to_dict()) if matched_q else None,
-        gold_overlap=gold_overlap,
+        chunk_config=first_res.chunk_config if first_res else None,
+        model_id=first_res.model_id if first_res else None,
+        latency_ms=first_res.latency_ms if first_res else None,
+        retrieved_chunks=first_res.retrieved_chunks if first_res else [],
+        gold_overlap=first_res.gold_overlap if first_res else None,
     )

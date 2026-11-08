@@ -98,10 +98,18 @@ def compare_runs(payload: CompareRequest, db: Session = Depends(get_db)) -> Comp
                 else:
                     ties += 1
 
+    all_zero_diffs = all(item.delta == 0.0 and item.p_value == 1.0 for item in metric_items)
+    zero_note = "All paired differences are zero (p = 1.0; identical performance on evaluated queries)." if all_zero_diffs else None
+
     return CompareResponse(
         experiment_id=payload.experiment_id,
+        unverified_included=exp.has_unverified,
+        has_unverified=exp.has_unverified,
+        verified_questions_count=exp.verified_questions_count or 0,
+        unverified_questions_count=exp.unverified_questions_count or 0,
         base_label=base_key,
         target_label=target_key,
         metrics=metric_items,
         win_loss_tie={"wins": wins, "losses": losses, "ties": ties},
+        note=zero_note,
     )

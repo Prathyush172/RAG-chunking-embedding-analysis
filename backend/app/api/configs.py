@@ -61,6 +61,14 @@ def get_presets() -> list[PresetInfo]:
             k=PRESET_CONFIGS["quick"]["k"],
         ),
         PresetInfo(
+            id="full",
+            name="Full Research Grid",
+            description="All 13 chunking configurations across 3 models (~15-20 min runtime on CPU).",
+            chunk_configs=PRESET_CONFIGS["full"]["configs"],
+            models=PRESET_CONFIGS["full"]["models"],
+            k=PRESET_CONFIGS["full"]["k"],
+        ),
+        PresetInfo(
             id="standard",
             name="Standard Research Evaluation",
             description="9 chunking configurations across 3 models (~5-10 min runtime on CPU).",
@@ -70,11 +78,11 @@ def get_presets() -> list[PresetInfo]:
         ),
         PresetInfo(
             id="comprehensive",
-            name="Comprehensive Full Grid",
+            name="Comprehensive Full Grid (Alias for Full)",
             description="All 13 chunking configurations across 3 models (~15-20 min runtime on CPU).",
-            chunk_configs=PRESET_CONFIGS["comprehensive"]["configs"],
-            models=PRESET_CONFIGS["comprehensive"]["models"],
-            k=PRESET_CONFIGS["comprehensive"]["k"],
+            chunk_configs=PRESET_CONFIGS["full"]["configs"],
+            models=PRESET_CONFIGS["full"]["models"],
+            k=PRESET_CONFIGS["full"]["k"],
         ),
     ]
 

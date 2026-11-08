@@ -19,11 +19,9 @@ DEFAULT_SETTINGS = {
 
 
 def _mask_key(key: str | None) -> str | None:
-    if not key:
+    if not key or not key.strip():
         return None
-    if len(key) <= 8:
-        return "****"
-    return key[:3] + "..." + key[-4:]
+    return "********"
 
 
 @router.get("", response_model=SettingsSchema)

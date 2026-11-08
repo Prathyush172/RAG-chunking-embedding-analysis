@@ -1,4 +1,5 @@
 import csv
+import datetime
 import io
 import json
 from pathlib import Path
@@ -21,6 +22,7 @@ from app.schemas import (
     QuestionSchema,
     QuestionCreateSchema,
     QuestionUpdateSchema,
+    QuestionReviewRequest,
     QuestionStatsResponse,
     ReviewProgressResponse,
     ValidationResponse,
@@ -30,6 +32,7 @@ from app.schemas import (
 router = APIRouter(prefix="/questions", tags=["questions"])
 
 QUESTIONS_FILE = Path("data/eval/questions.json")
+REJECTED_FILE = Path("data/eval/rejected.json")
 CLEAN_DIR = Path("data/clean")
 
 
@@ -232,12 +235,11 @@ def create_question(payload: QuestionCreateSchema) -> QuestionSchema:
     locator = EvidenceLocator(CLEAN_DIR)
     ev_items: list[EvidenceItem] = []
     for ev in payload.evidence:
-        matches = locator.find_quote(ev.doc_id, ev.quote)
-        if not matches:
+        start, end, all_matches = locator.locate_quote(ev.doc_id, ev.quote)
+        if start == -1 or not all_matches:
             raise HTTPException(status_code=400, detail=f"Quote not found in {ev.doc_id}")
-        if len(matches) > 1:
-            raise HTTPException(status_code=400, detail=f"Quote is ambiguous in {ev.doc_id} ({len(matches)} occurrences)")
-        start, end = matches[0]
+        if len(all_matches) > 1:
+            raise HTTPException(status_code=400, detail=f"Quote is ambiguous in {ev.doc_id} ({len(all_matches)} occurrences)")
         ev_items.append(EvidenceItem(doc_id=ev.doc_id, quote=ev.quote, char_start=start, char_end=end))
 
     # Derive section from first evidence span
@@ -308,6 +310,79 @@ def update_question(qid: str, payload: QuestionUpdateSchema) -> QuestionSchema:
 
     _write_all_questions(qs)
     return QuestionSchema(**target_q.to_dict())
+
+
+@router.post("/{qid}/review")
+def review_question(qid: str, payload: QuestionReviewRequest) -> dict[str, Any]:
+    qs = _read_all_questions()
+    target_idx = None
+    for idx, q in enumerate(qs):
+        if q.id == qid:
+            target_idx = idx
+            break
+    if target_idx is None:
+        raise HTTPException(status_code=404, detail=f"Question '{qid}' not found")
+
+    target_q = qs[target_idx]
+
+    if payload.verdict == "approve":
+        target_q.verified = True
+        target_q.reviewer = payload.reviewer or "reviewer"
+        if payload.notes:
+            target_q.notes = payload.notes
+        target_q.verified_at = datetime.datetime.utcnow().isoformat()
+        _write_all_questions(qs)
+        return {
+            "status": "approved",
+            "message": f"Question '{qid}' approved and verified.",
+            "question": target_q.to_dict(),
+        }
+
+    elif payload.verdict == "reject":
+        removed_q = qs.pop(target_idx)
+        _write_all_questions(qs)
+
+        rejected_list = []
+        if REJECTED_FILE.exists():
+            try:
+                with open(REJECTED_FILE, "r", encoding="utf-8") as f:
+                    rejected_list = json.load(f)
+            except Exception:
+                rejected_list = []
+
+        q_dict = removed_q.to_dict()
+        q_dict["rejection_notes"] = payload.notes
+        q_dict["rejected_by"] = payload.reviewer
+        q_dict["rejected_at"] = datetime.datetime.utcnow().isoformat()
+        rejected_list.append(q_dict)
+
+        REJECTED_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(REJECTED_FILE, "w", encoding="utf-8") as f:
+            json.dump(rejected_list, f, indent=2)
+
+        return {
+            "status": "rejected",
+            "message": f"Question '{qid}' rejected and moved to rejected.json.",
+        }
+
+    elif payload.verdict == "edit":
+        target_q.verified = False
+        if payload.question:
+            target_q.question = payload.question
+        if payload.reference_answer:
+            target_q.reference_answer = payload.reference_answer
+        if payload.notes:
+            target_q.notes = payload.notes
+        if payload.reviewer:
+            target_q.reviewer = payload.reviewer
+        _write_all_questions(qs)
+        return {
+            "status": "edited",
+            "message": f"Question '{qid}' updated (unverified).",
+            "question": target_q.to_dict(),
+        }
+    else:
+        raise HTTPException(status_code=400, detail=f"Unknown verdict '{payload.verdict}'")
 
 
 @router.delete("/{qid}")

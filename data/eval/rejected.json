@@ -1,0 +1,60 @@
+[
+  {
+    "id": "review-flow-test-01",
+    "question": "How are TCP connection socket pairs managed?",
+    "doc_id": "tcp",
+    "section": "3.4.1. Initial Sequence Number Selection",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "A connection is defined by a pair of sockets.  Connections can be\n   reused.",
+        "char_start": 44268,
+        "char_end": 44344
+      }
+    ],
+    "reference_answer": "Sockets define connections and can be reused.",
+    "type": "factual",
+    "difficulty": "medium",
+    "verified": true,
+    "drafted_by": "api",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.1,
+    "flagged_too_easy": false,
+    "reviewer": "Reviewer Alice",
+    "reviewed_at": "2026-11-08T08:04:06.307913",
+    "verified_at": "2026-11-08T08:04:06.307913",
+    "notes": "Verified against RFC 9293 Section 3.4",
+    "rejection_notes": "Redundant question",
+    "rejected_by": "Reviewer Bob",
+    "rejected_at": "2026-11-08T08:04:06.370074"
+  },
+  {
+    "id": "review-flow-test-01",
+    "question": "How are TCP connection socket pairs managed?",
+    "doc_id": "tcp",
+    "section": "3.4.1. Initial Sequence Number Selection",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "A connection is defined by a pair of sockets.  Connections can be\n   reused.",
+        "char_start": 44268,
+        "char_end": 44344
+      }
+    ],
+    "reference_answer": "Sockets define connections and can be reused.",
+    "type": "factual",
+    "difficulty": "medium",
+    "verified": true,
+    "drafted_by": "api",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.1,
+    "flagged_too_easy": false,
+    "reviewer": "Reviewer Alice",
+    "reviewed_at": "2026-11-08T08:04:31.647839",
+    "verified_at": "2026-11-08T08:04:31.647839",
+    "notes": "Verified against RFC 9293 Section 3.4",
+    "rejection_notes": "Redundant question",
+    "rejected_by": "Reviewer Bob",
+    "rejected_at": "2026-11-08T08:04:31.681724"
+  }
+]

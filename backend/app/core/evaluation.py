@@ -137,9 +137,18 @@ class Question:
             res["reviewer"] = self.reviewer
         if self.reviewed_at is not None:
             res["reviewed_at"] = self.reviewed_at
+            res["verified_at"] = self.reviewed_at
         if self.notes is not None:
             res["notes"] = self.notes
         return res
+
+    @property
+    def verified_at(self) -> Optional[str]:
+        return self.reviewed_at
+
+    @verified_at.setter
+    def verified_at(self, value: Optional[str]) -> None:
+        self.reviewed_at = value
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Question:
@@ -172,7 +181,7 @@ class Question:
             verified=bool(data.get("verified", False)),
             drafted_by=data.get("drafted_by", "llm"),
             reviewer=data.get("reviewer"),
-            reviewed_at=data.get("reviewed_at"),
+            reviewed_at=data.get("reviewed_at") or data.get("verified_at"),
             notes=data.get("notes"),
             lexical_overlap_run=int(data.get("lexical_overlap_run", 0)),
             lexical_overlap_jaccard=float(data.get("lexical_overlap_jaccard", 0.0)),
