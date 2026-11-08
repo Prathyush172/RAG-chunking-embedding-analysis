@@ -1,22 +1,21 @@
 /**
  * src/lib/api.ts
- * Type-safe API client covering all backend FastAPI endpoints.
+ * Type-safe API client matching the FastAPI backend OpenAPI specification.
  */
 
-import { components, paths } from "./api-types";
+import { components } from "./api-types";
 
 export type Schemas = components["schemas"];
-export type DocumentInfo = Schemas["DocumentInfo"];
-export type DocumentTextResponse = Schemas["DocumentTextResponse"];
-export type LineIndexResponse = Schemas["LineIndexResponse"];
-export type SectionEntry = Schemas["SectionEntry"];
-export type SearchMatch = Schemas["SearchMatch"];
+
+export type DocumentSummary = Schemas["DocumentSummary"];
+export type SectionOutlineItem = Schemas["SectionOutlineItem"];
+export type SearchMatchItem = Schemas["SearchMatchItem"];
 export type QuestionSchema = Schemas["QuestionSchema"];
 export type QuestionCreateSchema = Schemas["QuestionCreateSchema"];
 export type QuestionUpdateSchema = Schemas["QuestionUpdateSchema"];
 export type QuestionReviewRequest = Schemas["QuestionReviewRequest"];
-export type QuestionStats = Schemas["QuestionStats"];
-export type ValidationResult = Schemas["ValidationResult"];
+export type QuestionStatsResponse = Schemas["QuestionStatsResponse"];
+export type ValidationResponse = Schemas["ValidationResponse"];
 export type PresetInfo = Schemas["PresetInfo"];
 export type ModelInfo = Schemas["ModelInfo"];
 export type ChunkerInfo = Schemas["ChunkerInfo"];
@@ -24,18 +23,39 @@ export type EstimateRequest = Schemas["EstimateRequest"];
 export type EstimateResponse = Schemas["EstimateResponse"];
 export type ExperimentCreateRequest = Schemas["ExperimentCreateRequest"];
 export type ExperimentResponse = Schemas["ExperimentResponse"];
-export type LeaderboardRow = Schemas["LeaderboardRow"];
-export type HeatmapData = Schemas["HeatmapData"];
+export type ResultSummaryItem = Schemas["ResultSummaryItem"];
+export type ResultSummaryResponse = Schemas["ResultSummaryResponse"];
+export type HeatmapResponse = Schemas["HeatmapResponse"];
 export type ParetoPoint = Schemas["ParetoPoint"];
-export type QuestionDrilldown = Schemas["QuestionDrilldown"];
 export type CompareRequest = Schemas["CompareRequest"];
 export type CompareResponse = Schemas["CompareResponse"];
-export type PlaygroundQueryRequest = Schemas["PlaygroundQueryRequest"];
-export type MultiPlaygroundResponse = Schemas["MultiPlaygroundResponse"];
-export type SinglePlaygroundResponse = Schemas["SinglePlaygroundResponse"];
+export type PlaygroundRequest = Schemas["PlaygroundRequest"];
+export type PlaygroundResponse = Schemas["PlaygroundResponse"];
+export type PlaygroundConfigResult = Schemas["PlaygroundConfigResult"];
+export type RetrievedChunkDetail = Schemas["RetrievedChunkDetail"];
 export type DecisionMatrixWeights = Schemas["DecisionMatrixWeights"];
-export type DecisionMatrixResponse = Schemas["DecisionMatrixResponse"];
+export type DecisionMatrixRankItem = Schemas["DecisionMatrixRankItem"];
 export type SettingsSchema = Schemas["SettingsSchema"];
+export type SettingsUpdateSchema = Schemas["SettingsUpdateSchema"];
+
+export interface DocumentTextResponse {
+  doc_id: string;
+  text: string;
+  char_count: number;
+  start?: number;
+  end?: number;
+}
+
+export interface LineIndexResponse {
+  doc_id: string;
+  total_lines: number;
+  line_offsets: number[];
+}
+
+export interface DecisionMatrixApiResponse {
+  weights: DecisionMatrixWeights;
+  ranked_results: DecisionMatrixRankItem[];
+}
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -66,10 +86,11 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 
 export const api = {
   // Health
-  getHealth: () => fetchJson<{ status: string; models: string[]; docs: string[]; questions_count: number }>("/api/health"),
+  getHealth: () =>
+    fetchJson<{ status: string; models: string[]; docs: string[]; questions_count: number }>("/api/health"),
 
   // Corpus
-  listDocuments: () => fetchJson<DocumentInfo[]>("/api/corpus/documents"),
+  listDocuments: () => fetchJson<DocumentSummary[]>("/api/corpus/documents"),
   getDocumentText: (docId: string, start?: number, end?: number) => {
     const params = new URLSearchParams();
     if (start !== undefined) params.append("start", start.toString());
@@ -80,11 +101,11 @@ export const api = {
   getDocumentLineIndex: (docId: string) =>
     fetchJson<LineIndexResponse>(`/api/corpus/documents/${docId}/line-index`),
   getDocumentSections: (docId: string) =>
-    fetchJson<SectionEntry[]>(`/api/corpus/documents/${docId}/sections`),
+    fetchJson<SectionOutlineItem[]>(`/api/corpus/documents/${docId}/sections`),
   searchCorpus: (q: string, docId?: string, limit = 20) => {
     const params = new URLSearchParams({ q, limit: limit.toString() });
     if (docId) params.append("doc_id", docId);
-    return fetchJson<SearchMatch[]>(`/api/corpus/search?${params.toString()}`);
+    return fetchJson<SearchMatchItem[]>(`/api/corpus/search?${params.toString()}`);
   },
 
   // Questions
@@ -115,10 +136,13 @@ export const api = {
       `/api/questions/${id}/review`,
       { method: "POST", body: JSON.stringify(data) }
     ),
-  getQuestionStats: () => fetchJson<QuestionStats>("/api/questions/stats"),
-  getReviewProgress: () => fetchJson<{ total: number; verified: number; unverified: number; percent_complete: number }>("/api/questions/review/progress"),
+  getQuestionStats: () => fetchJson<QuestionStatsResponse>("/api/questions/stats"),
+  getReviewProgress: () =>
+    fetchJson<{ total: number; verified: number; unverified: number; percent_complete: number }>(
+      "/api/questions/review/progress"
+    ),
   getNextUnverifiedQuestion: () => fetchJson<QuestionSchema | null>("/api/questions/review/next"),
-  validateQuestions: () => fetchJson<ValidationResult>("/api/questions/validate", { method: "POST" }),
+  validateQuestions: () => fetchJson<ValidationResponse>("/api/questions/validate", { method: "POST" }),
   exportQuestionsCsvUrl: () => "/api/questions/export",
   importQuestionsCsv: async (file: File) => {
     const text = await file.text();
@@ -160,17 +184,13 @@ export const api = {
 
   // Results
   getLeaderboard: (expId: string) =>
-    fetchJson<{ experiment_id: string; unverified_included: boolean; verified_questions_count: number; unverified_questions_count: number; rows: LeaderboardRow[] }>(
-      `/api/results/${expId}/leaderboard`
-    ),
+    fetchJson<ResultSummaryResponse>(`/api/results/${expId}/summary`),
   getHeatmap: (expId: string, metric = "hit_rate") =>
-    fetchJson<HeatmapData>(`/api/results/${expId}/heatmap?metric=${metric}`),
+    fetchJson<HeatmapResponse>(`/api/results/${expId}/heatmap?metric=${metric}`),
   getPareto: (expId: string) =>
-    fetchJson<{ experiment_id: string; points: ParetoPoint[]; frontier_points: ParetoPoint[] }>(
-      `/api/results/${expId}/pareto`
-    ),
+    fetchJson<ParetoPoint[]>(`/api/results/${expId}/pareto`),
   getQuestionDrilldown: (expId: string, qid: string) =>
-    fetchJson<QuestionDrilldown>(`/api/results/${expId}/drilldown/${qid}`),
+    fetchJson<any>(`/api/results/${expId}/questions/${qid}`),
 
   // Compare
   compareRuns: (req: CompareRequest) =>
@@ -180,8 +200,8 @@ export const api = {
     }),
 
   // Playground
-  queryPlayground: (req: PlaygroundQueryRequest) =>
-    fetchJson<MultiPlaygroundResponse | SinglePlaygroundResponse>("/api/playground/query", {
+  queryPlayground: (req: PlaygroundRequest) =>
+    fetchJson<PlaygroundResponse>(`/api/playground/query`, {
       method: "POST",
       body: JSON.stringify(req),
     }),
@@ -191,7 +211,7 @@ export const api = {
     fetchJson<Record<string, DecisionMatrixWeights>>("/api/decision-matrix/presets"),
   computeDecisionMatrix: (weights: DecisionMatrixWeights, expId?: string) => {
     const url = expId ? `/api/decision-matrix?experiment_id=${expId}` : "/api/decision-matrix";
-    return fetchJson<DecisionMatrixResponse>(url, {
+    return fetchJson<DecisionMatrixApiResponse>(url, {
       method: "POST",
       body: JSON.stringify(weights),
     });
@@ -207,7 +227,7 @@ export const api = {
 
   // Settings
   getSettings: () => fetchJson<SettingsSchema>("/api/settings"),
-  updateSettings: (settings: SettingsSchema) =>
+  updateSettings: (settings: SettingsUpdateSchema) =>
     fetchJson<SettingsSchema>("/api/settings", {
       method: "PUT",
       body: JSON.stringify(settings),

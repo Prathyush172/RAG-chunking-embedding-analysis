@@ -4,10 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import {
   FileText,
   CheckCircle2,
-  Clock,
   Zap,
   ArrowRight,
-  TrendingUp,
   Layers,
   Sparkles,
 } from "lucide-react";
@@ -15,7 +13,7 @@ import { api } from "../lib/api";
 import { useExperiment } from "../context/ExperimentContext";
 
 export const Overview: React.FC = () => {
-  const { activeExperiment, experiments } = useExperiment();
+  const { activeExperiment } = useExperiment();
 
   const { data: documents = [] } = useQuery({
     queryKey: ["corpus-docs"],
@@ -35,9 +33,9 @@ export const Overview: React.FC = () => {
 
   // Calculate best performers from active experiment if completed
   const rows = leaderboard?.rows || [];
-  const bestHit = rows.length > 0 ? [...rows].sort((a, b) => b.hit_rate - a.hit_rate)[0] : null;
+  const bestHit = rows.length > 0 ? [...rows].sort((a, b) => b.hit_at_k - a.hit_at_k)[0] : null;
   const bestMrr = rows.length > 0 ? [...rows].sort((a, b) => b.mrr - a.mrr)[0] : null;
-  const lowestLatency = rows.length > 0 ? [...rows].sort((a, b) => a.latency_p50_ms - b.latency_p50_ms)[0] : null;
+  const lowestLatency = rows.length > 0 ? [...rows].sort((a, b) => a.mean_latency_ms - b.mean_latency_ms)[0] : null;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -211,10 +209,10 @@ export const Overview: React.FC = () => {
             <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
               <div className="text-xs text-slate-500 dark:text-slate-400">Highest Hit@5</div>
               <div className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">
-                {(bestHit.hit_rate * 100).toFixed(1)}%
+                {(bestHit.hit_at_k * 100).toFixed(1)}%
               </div>
               <div className="text-xs text-slate-700 dark:text-slate-300 font-mono mt-1 truncate">
-                {bestHit.config_label} + {bestHit.model_id}
+                {bestHit.config} + {bestHit.model}
               </div>
             </div>
 
@@ -224,17 +222,17 @@ export const Overview: React.FC = () => {
                 {bestMrr?.mrr.toFixed(3)}
               </div>
               <div className="text-xs text-slate-700 dark:text-slate-300 font-mono mt-1 truncate">
-                {bestMrr?.config_label} + {bestMrr?.model_id}
+                {bestMrr?.config} + {bestMrr?.model}
               </div>
             </div>
 
             <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-              <div className="text-xs text-slate-500 dark:text-slate-400">Lowest Latency (p50)</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">Lowest Latency (mean)</div>
               <div className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1">
-                {lowestLatency?.latency_p50_ms.toFixed(1)} ms
+                {lowestLatency?.mean_latency_ms.toFixed(1)} ms
               </div>
               <div className="text-xs text-slate-700 dark:text-slate-300 font-mono mt-1 truncate">
-                {lowestLatency?.config_label} + {lowestLatency?.model_id}
+                {lowestLatency?.config} + {lowestLatency?.model}
               </div>
             </div>
           </div>
