@@ -1,0 +1,1282 @@
+[
+  {
+    "id": "tcp-01",
+    "question": "How does TCP treat socket pair allocation when establishing new connection instances?",
+    "doc_id": "tcp",
+    "section": "3.4.1. Initial Sequence Number Selection",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "A connection is defined by a pair of sockets.  Connections can be\n   reused.  New instances of a connection will be referred to as\n   incarnations of the connection.  The problem that arises from this is\n   -- \"how does the TCP implementation identify duplicate segments from\n   previous incarnations of the connection?\"  This problem becomes\n   apparent if the connection is being opened and closed in quick\n   succession, or if the connection breaks with loss of memory and is\n   then reestablished.  To support this, the TIME-WAIT state limits the\n   rate of connection reuse, while the initial sequence number selection\n   described below further protects against ambiguity about which\n   incarnation of a connection an incoming packet corresponds to.",
+        "char_start": 44268,
+        "char_end": 45023
+      }
+    ],
+    "reference_answer": "A connection is defined by a pair of sockets and can be reused over time, with new instances referred to as connection incarnations.",
+    "type": "factual",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.098,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-02",
+    "question": "Why should transport stacks avoid constantly readjusting segment sizing when network links exhibit dynamic payload compression?",
+    "doc_id": "tcp",
+    "section": "3.7.3. Interfaces with Variable MTU Values",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "The effective MTU can sometimes vary, as when used with variable\n   compression, e.g., RObust Header Compression (ROHC) [37].  It is\n   tempting for a TCP implementation to advertise the largest possible\n   MSS, to support the most efficient use of compressed payloads.\n   Unfortunately, some compression schemes occasionally need to transmit\n   full headers (and thus smaller payloads) to resynchronize state at\n   their endpoint compressors/decompressors.  If the largest MTU is used\n   to calculate the value to advertise in the MSS Option, TCP\n   retransmission may interfere with compressor resynchronization.",
+        "char_start": 87314,
+        "char_end": 87928
+      }
+    ],
+    "reference_answer": "The effective MTU can vary over compression interfaces, but implementations must avoid destabilizing MSS estimations on momentary link alterations.",
+    "type": "factual",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0175,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-03",
+    "question": "What makes calculating a reliable retransmission timeout challenging in an internetwork environment?",
+    "doc_id": "tcp",
+    "section": "3.8.1. Retransmission Timeout",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "Because of the variability of the networks that compose an\n   internetwork system and the wide range of uses of TCP connections,\n   the retransmission timeout (RTO) must be dynamically determined.",
+        "char_start": 91649,
+        "char_end": 91845
+      }
+    ],
+    "reference_answer": "Calculating retransmission timeouts is challenging because of network latency variability and wide differences in round-trip times across diverse network paths.",
+    "type": "factual",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.1429,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-04",
+    "question": "What standard requirement governs silly window syndrome prevention in sending TCP hosts?",
+    "doc_id": "tcp",
+    "section": "3.8.6.2.1. Sender's Algorithm -- When to Send Data",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "A TCP implementation MUST include a SWS avoidance algorithm in the\n   sender (MUST-38).",
+        "char_start": 106521,
+        "char_end": 106608
+      }
+    ],
+    "reference_answer": "TCP implementations are required to implement a sender-side Silly Window Syndrome (SWS) avoidance algorithm to prevent emitting tiny data segments.",
+    "type": "factual",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0556,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-05",
+    "question": "How does TCP signal asynchronous soft error events upward to the application layer?",
+    "doc_id": "tcp",
+    "section": "3.9.1.8. Asynchronous Reports",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "There MUST be a mechanism for reporting soft TCP error conditions to\n   the application (MUST-47).  Generically, we assume this takes the\n   form of an application-supplied ERROR_REPORT routine that may be\n   upcalled asynchronously from the transport layer:",
+        "char_start": 130173,
+        "char_end": 130431
+      }
+    ],
+    "reference_answer": "TCP implementations must provide a mechanism to notify the application of asynchronous soft errors, typically as an application-notified error condition.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 3,
+    "lexical_overlap_jaccard": 0.2,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-06",
+    "question": "What historical document initially articulated the design objectives and operational examples of the TCP protocol?",
+    "doc_id": "tcp",
+    "section": "2. Introduction",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "RFC 793 contains a discussion of the TCP design goals and provides\n   examples of its operation, including examples of connection\n   establishment, connection termination, and packet retransmission to\n   repair losses.",
+        "char_start": 8066,
+        "char_end": 8284
+      }
+    ],
+    "reference_answer": "RFC 793 initially articulated TCP design goals and provided examples of connection establishment, teardown, and operational scenarios.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 3,
+    "lexical_overlap_jaccard": 0.12,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-07",
+    "question": "How are TCP segments encapsulated and transported across internet host networks?",
+    "doc_id": "tcp",
+    "section": "3.1. Header Format",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "TCP segments are sent as internet datagrams.  The Internet Protocol\n   (IP) header carries several information fields, including the source\n   and destination host addresses [1] [13].  A TCP header follows the IP\n   headers, supplying information specific to TCP.  This division allows\n   for the existence of host-level protocols other than TCP.  In the\n   early development of the Internet suite of protocols, the IP header\n   fields had been a part of TCP.",
+        "char_start": 11961,
+        "char_end": 12420
+      }
+    ],
+    "reference_answer": "TCP segments are transmitted as internet datagrams, preceded by IP headers that supply addressing, routing, and header format metadata.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.1143,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-08",
+    "question": "What conditions characterize a TCP session as being in a half-open state?",
+    "doc_id": "tcp",
+    "section": "3.5.1. Half-Open Connections and Other Anomalies",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "An established connection is said to be \"half-open\" if one of the TCP\n   peers has closed or aborted the connection at its end without the\n   knowledge of the other, or if the two ends of the connection have\n   become desynchronized owing to a failure or reboot that resulted in\n   loss of memory.  Such connections will automatically become reset if\n   an attempt is made to send data in either direction.  However, half-\n   open connections are expected to be unusual.",
+        "char_start": 63818,
+        "char_end": 64288
+      }
+    ],
+    "reference_answer": "A connection is half-open if one endpoint closed or aborted without notifying the remote peer, or if an endpoint crashed and lost its memory state.",
+    "type": "definition",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.075,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-09",
+    "question": "What operational capability does a half-closed TCP state provide to communicating peers?",
+    "doc_id": "tcp",
+    "section": "3.6.1. Half-Closed Connections",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "The normal TCP close sequence delivers buffered data reliably in both\n   directions.  Since the two directions of a TCP connection are closed\n   independently, it is possible for a connection to be \"half closed\",\n   i.e., closed in only one direction, and a host is permitted to\n   continue sending data in the open direction on a half-closed\n   connection.",
+        "char_start": 77459,
+        "char_end": 77816
+      }
+    ],
+    "reference_answer": "Because TCP connections are full-duplex and independent in each direction, a peer can close its outbound sending stream while continuing to receive inbound data.",
+    "type": "definition",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 3,
+    "lexical_overlap_jaccard": 0.1034,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-10",
+    "question": "Where should implementers look in the TCP specification for formal definitions of protocol terminology?",
+    "doc_id": "tcp",
+    "section": "3.3. TCP Terminology Overview",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "This section includes an overview of key terms needed to understand\n   the detailed protocol operation in the rest of the document.  There\n   is a glossary of terms in Section 4.",
+        "char_start": 25491,
+        "char_end": 25669
+      }
+    ],
+    "reference_answer": "The specification includes an overview of key terms in Section 3.3 and provides an exhaustive protocol glossary in Section 4 to guide implementation.",
+    "type": "procedural",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.05,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-11",
+    "question": "What recommendation applies to newly designed networking applications regarding the TCP urgent pointer?",
+    "doc_id": "tcp",
+    "section": "3.8.5. The Communication of Urgent Information",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "As a result of implementation differences and middlebox interactions,\n   new applications SHOULD NOT employ the TCP urgent mechanism (SHLD-\n   13).  However, TCP implementations MUST still include support for the\n   urgent mechanism (MUST-30).  Information on how some TCP\n   implementations interpret the urgent pointer can be found in RFC 6093\n   [39].",
+        "char_start": 98826,
+        "char_end": 99180
+      }
+    ],
+    "reference_answer": "Because of middlebox inconsistencies and historic implementation differences, newly designed applications are advised not to utilize the TCP urgent pointer.",
+    "type": "procedural",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 3,
+    "lexical_overlap_jaccard": 0.1212,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-12",
+    "question": "What sequence of actions is triggered when a local process invokes the CLOSE operation on a socket?",
+    "doc_id": "tcp",
+    "section": "3.9.1.4. Close",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "This command causes the connection specified to be closed.  If the\n   connection is not open or the calling process is not authorized to\n   use this connection, an error is returned.  Closing connections is\n   intended to be a graceful operation in the sense that outstanding\n   SENDs will be transmitted (and retransmitted), as flow control\n   permits, until all have been serviced.  Thus, it should be acceptable\n   to make several SEND calls, followed by a CLOSE, and expect all the\n   data to be sent to the destination.  It should also be clear that\n   users should continue to RECEIVE on CLOSING connections since the\n   remote peer may be trying to transmit the last of its data.  Thus,\n   CLOSE means \"I have no more to send\" but does not mean \"I will not\n   receive any more.\"  It may happen (if the user-level protocol is not\n   well thought out) that the closing side is unable to get rid of all\n   its data before timing out.  In this event, CLOSE turns into ABORT,\n   and the closing TCP peer gives up.",
+        "char_start": 126785,
+        "char_end": 127800
+      }
+    ],
+    "reference_answer": "Invoking CLOSE instructs the TCP stack to finish sending queued data and terminate the socket connection gracefully.",
+    "type": "procedural",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.04,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-13",
+    "question": "How does TCP interact with system network errors and graceful socket closure?",
+    "doc_id": "tcp",
+    "section": "3.9.1.4. Close",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "This command causes the connection specified to be closed.  If the\n   connection is not open or the calling process is not authorized to\n   use this connection, an error is returned.  Closing connections is\n   intended to be a graceful operation in the sense that outstanding\n   SENDs will be transmitted (and retransmitted), as flow control\n   permits, until all have been serviced.  Thus, it should be acceptable\n   to make several SEND calls, followed by a CLOSE, and expect all the\n   data to be sent to the destination.  It should also be clear that\n   users should continue to RECEIVE on CLOSING connections since the\n   remote peer may be trying to transmit the last of its data.  Thus,\n   CLOSE means \"I have no more to send\" but does not mean \"I will not\n   receive any more.\"  It may happen (if the user-level protocol is not\n   well thought out) that the closing side is unable to get rid of all\n   its data before timing out.  In this event, CLOSE turns into ABORT,\n   and the closing TCP peer gives up.",
+        "char_start": 126785,
+        "char_end": 127800
+      },
+      {
+        "doc_id": "tcp",
+        "quote": "TCP implementations MUST act on an ICMP error message passed up from\n   the IP layer, directing it to the connection that created the error\n   (MUST-54).  The necessary demultiplexing information can be found in\n   the IP header contained within the ICMP message.",
+        "char_start": 135434,
+        "char_end": 135697
+      }
+    ],
+    "reference_answer": "A CLOSE call terminates an active socket after draining buffers, while network-layer ICMP error notifications must be routed directly to the specific connection that originated the fault.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0215,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "tcp-14",
+    "question": "How is the functional interface between user applications and the TCP protocol stack structured across operating systems?",
+    "doc_id": "tcp",
+    "section": "3.9.1. User/TCP Interface",
+    "evidence": [
+      {
+        "doc_id": "tcp",
+        "quote": "The following functional description of user commands to the TCP\n   implementation is, at best, fictional, since every operating system\n   will have different facilities.  Consequently, we must warn readers\n   that different TCP implementations may have different user\n   interfaces.  However, all TCP implementations must provide a certain\n   minimum set of services to guarantee that all TCP implementations can\n   support the same protocol hierarchy.  This section specifies the\n   functional interfaces required of all TCP implementations.",
+        "char_start": 112873,
+        "char_end": 113416
+      },
+      {
+        "doc_id": "tcp",
+        "quote": "There MUST be a mechanism for reporting soft TCP error conditions to\n   the application (MUST-47).  Generically, we assume this takes the\n   form of an application-supplied ERROR_REPORT routine that may be\n   upcalled asynchronously from the transport layer:",
+        "char_start": 130173,
+        "char_end": 130431
+      }
+    ],
+    "reference_answer": "The user/TCP interface description is a functional model adapted differently across operating systems, which must provide mechanisms to convey both synchronous calls and asynchronous soft error reports.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.0833,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-01",
+    "question": "What user needs and usage pattern assumptions guided the organizational design of the domain system?",
+    "doc_id": "dns",
+    "section": "2.3. Assumptions about usage",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The organization of the domain system derives from some assumptions\nabout the needs and usage patterns of its user community and is designed\nto avoid many of the the complicated problems found in general purpose\ndatabase systems.",
+        "char_start": 6320,
+        "char_end": 6549
+      }
+    ],
+    "reference_answer": "The domain system derives from assumptions regarding user access patterns and requirements, seeking to avoid centralized maintenance overheads.",
+    "type": "factual",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 4,
+    "lexical_overlap_jaccard": 0.25,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-02",
+    "question": "How does the domain specification introduce readers to practical hierarchical naming concepts?",
+    "doc_id": "dns",
+    "section": "3.4. Example name space",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The following figure shows a part of the current domain name space, and\nis used in many examples in this RFC.  Note that the tree is a very\nsmall subset of the actual name space.",
+        "char_start": 21778,
+        "char_end": 21956
+      }
+    ],
+    "reference_answer": "The specification illustrates naming concepts using an example subtree showing how domains and subdomains branch from the root.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0417,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-03",
+    "question": "In what formats are resource records represented when transmitted across the network versus stored internally?",
+    "doc_id": "dns",
+    "section": "3.6.1. Textual expression of RRs",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "RRs are represented in binary form in the packets of the DNS protocol,\nand are usually represented in highly encoded form when stored in a name\nserver or resolver.  In this memo, we adopt a style similar to that used",
+        "char_start": 29095,
+        "char_end": 29311
+      }
+    ],
+    "reference_answer": "Resource records are encoded in binary within network packets and stored in compact encoded forms within servers and resolvers.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0741,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-04",
+    "question": "What was the fate of the experimental completion services outlined in the initial domain requests for comments?",
+    "doc_id": "dns",
+    "section": "3.9. Completion queries (Obsolete)",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The optional completion services described in RFCs 882 and 883 have been\ndeleted.  Redesigned services may become available in the future, or the\nopcodes may be reclaimed for other use.",
+        "char_start": 38815,
+        "char_end": 39000
+      }
+    ],
+    "reference_answer": "The experimental completion query services described in RFC 882 and RFC 883 were deleted from the specification.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.087,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-05",
+    "question": "How do wildcard resource records modify regular name matching behavior during server lookups?",
+    "doc_id": "dns",
+    "section": "4.3.3. Wildcards",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "In the previous algorithm, special treatment was given to RRs with owner\nnames starting with the label \"*\".  Such RRs are called wildcards.\nWildcard RRs can be thought of as instructions for synthesizing RRs.\nWhen the appropriate conditions are met, the name server creates RRs\nwith an owner name equal to the query name and contents taken from the\nwildcard RRs.",
+        "char_start": 54219,
+        "char_end": 54581
+      }
+    ],
+    "reference_answer": "Wildcard resource records with owner names starting with '*' allow servers to dynamically synthesize pseudo-RRs for matching queried names.",
+    "type": "factual",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0909,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-06",
+    "question": "What is the functional definition and scope of responsibility for a name server program?",
+    "doc_id": "dns",
+    "section": "2.4. Elements of the DNS",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "NAME SERVERS are server programs which hold information about\n     the domain tree's structure and set information.  A name\n     server may cache structure or set information about any part\n     of the domain tree, but in general a particular name server\n     has complete information about a subset of the domain space,\n     and pointers to other name servers that can be used to lead to\n     information from any part of the domain tree.",
+        "char_start": 11824,
+        "char_end": 12263
+      }
+    ],
+    "reference_answer": "Name servers store information about the domain tree structure and resource sets. While a server may cache data for any subtree, it typically maintains complete authoritative information for a specific subset and holds pointers to other servers for the rest of the namespace.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 3,
+    "lexical_overlap_jaccard": 0.0769,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-07",
+    "question": "How is the domain name space structured mathematically and hierarchically?",
+    "doc_id": "dns",
+    "section": "3.1. Name space specifications and terminology",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The domain name space is a tree structure.  Each node and leaf on the\ntree corresponds to a resource set (which may be empty).  The domain\nsystem makes no distinctions between the uses of the interior nodes and\nleaves, and this memo uses the term \"node\" to refer to both.",
+        "char_start": 14503,
+        "char_end": 14774
+      }
+    ],
+    "reference_answer": "The domain name space is structured as a tree where each node and leaf represents a resource set with associated records.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 4,
+    "lexical_overlap_jaccard": 0.12,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-08",
+    "question": "What parameters identify a standard domain query submitted by a network client?",
+    "doc_id": "dns",
+    "section": "3.7.1. Standard queries",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "A standard query specifies a target domain name (QNAME), query type\n(QTYPE), and query class (QCLASS) and asks for RRs which match.  This\ntype of query makes up such a vast majority of DNS queries that we use\nthe term \"query\" to mean standard query unless otherwise specified.  The\nQTYPE and QCLASS fields are each 16 bits long, and are a superset of\ndefined types and classes.",
+        "char_start": 35235,
+        "char_end": 35612
+      }
+    ],
+    "reference_answer": "A standard query specifies a target QNAME, a query type (QTYPE), and a query class (QCLASS) to find matching resource records.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.0789,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-09",
+    "question": "What two partitioning mechanisms divide the comprehensive domain database into manageable zones?",
+    "doc_id": "dns",
+    "section": "4.2. How the database is divided into zones",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The domain database is partitioned in two ways: by class, and by \"cuts\"\nmade in the name space between nodes.",
+        "char_start": 40318,
+        "char_end": 40427
+      }
+    ],
+    "reference_answer": "The domain database is partitioned by protocol class and by structural cuts across tree nodes, dividing domain trees into zones.",
+    "type": "definition",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.1765,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-10",
+    "question": "What standard capabilities do resolvers offer to client programs seeking internet translations?",
+    "doc_id": "dns",
+    "section": "5.2.1. Typical functions",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The client interface to the resolver is influenced by the local host's\nconventions, but the typical resolver-client interface has three\nfunctions:",
+        "char_start": 64925,
+        "char_end": 65071
+      }
+    ],
+    "reference_answer": "Typical resolver client interfaces provide hostname-to-address lookups, reverse address-to-name lookups, and generalized record type queries.",
+    "type": "procedural",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0556,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-11",
+    "question": "Why do resolver implementations dedicate substantial logic to error processing and fallback handling?",
+    "doc_id": "dns",
+    "section": "5.3. Resolver internals",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "Every resolver implementation uses slightly different algorithms, and\ntypically spends much more logic dealing with errors of various sorts\nthan typical occurances.  This section outlines a recommended basic\nstrategy for resolver operation, but leaves details to [RFC-1035].",
+        "char_start": 69990,
+        "char_end": 70264
+      }
+    ],
+    "reference_answer": "Resolvers dedicate significant complexity to error processing to navigate redundant servers, timeouts, and inconsistent remote delegations gracefully.",
+    "type": "procedural",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0588,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-12",
+    "question": "How does an electronic mail agent locate mail routing hosts for a target destination?",
+    "doc_id": "dns",
+    "section": "6.2.3. QNAME=SRI-NIC.ARPA, QTYPE=MX",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "This type of query might be result from a mailer trying to look up\nrouting information for the mail destination HOSTMASTER@SRI-NIC.ARPA.\nThe response from C.ISI.EDU would be:",
+        "char_start": 93551,
+        "char_end": 93725
+      }
+    ],
+    "reference_answer": "Mail agents perform MX queries specifying the target domain name to obtain priority-ranked mail routing records.",
+    "type": "procedural",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.1304,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-13",
+    "question": "How does the hierarchical domain tree translate into distinct administrative operational zones?",
+    "doc_id": "dns",
+    "section": "3.1. Name space specifications and terminology",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The domain name space is a tree structure.  Each node and leaf on the\ntree corresponds to a resource set (which may be empty).  The domain\nsystem makes no distinctions between the uses of the interior nodes and\nleaves, and this memo uses the term \"node\" to refer to both.",
+        "char_start": 14503,
+        "char_end": 14774
+      },
+      {
+        "doc_id": "dns",
+        "quote": "The domain database is partitioned in two ways: by class, and by \"cuts\"\nmade in the name space between nodes.",
+        "char_start": 40318,
+        "char_end": 40427
+      }
+    ],
+    "reference_answer": "The domain tree structure organizes resource sets under nodes, which are then cut along administrative boundaries into distinct zones per class.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0571,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns-14",
+    "question": "How do resolver software architectures balance client utility interfaces with internet error resilience?",
+    "doc_id": "dns",
+    "section": "5.2.1. Typical functions",
+    "evidence": [
+      {
+        "doc_id": "dns",
+        "quote": "The client interface to the resolver is influenced by the local host's\nconventions, but the typical resolver-client interface has three\nfunctions:",
+        "char_start": 64925,
+        "char_end": 65071
+      },
+      {
+        "doc_id": "dns",
+        "quote": "Every resolver implementation uses slightly different algorithms, and\ntypically spends much more logic dealing with errors of various sorts\nthan typical occurances.  This section outlines a recommended basic\nstrategy for resolver operation, but leaves details to [RFC-1035].",
+        "char_start": 69990,
+        "char_end": 70264
+      }
+    ],
+    "reference_answer": "Resolvers present simple lookup abstractions like name-to-address mapping to applications while running complex internal logic to manage timeouts and communication errors.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0465,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-01",
+    "question": "What naming guidelines govern the character selection and construction of preferred internet host names?",
+    "doc_id": "dns_implementation",
+    "section": "2.3.1. Preferred name syntax",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "The DNS specifications attempt to be as general as possible in the rules\nfor constructing domain names.  The idea is that the name of any\nexisting object can be expressed as a domain name with minimal changes.",
+        "char_start": 18853,
+        "char_end": 19062
+      }
+    ],
+    "reference_answer": "Domain names follow general construction guidelines requiring labels to be compact and composed of standardized alphanumeric characters and hyphens.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.04,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-02",
+    "question": "What was the function and processing requirement of the obsolete MD resource record?",
+    "doc_id": "dns_implementation",
+    "section": "3.3.4. MD RDATA format (Obsolete)",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "MADNAME         A <domain-name> which specifies a host which has a mail\n                agent for the domain which should be able to deliver\n                mail for the domain.",
+        "char_start": 32020,
+        "char_end": 32197
+      }
+    ],
+    "reference_answer": "The obsolete MD record specified a mail delivery agent in MADNAME and triggered additional section lookups for the agent's host address.",
+    "type": "factual",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-03",
+    "question": "What experimental mailbox relocation capability was provided by the MR resource record?",
+    "doc_id": "dns_implementation",
+    "section": "3.3.8. MR RDATA format (EXPERIMENTAL)",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "NEWNAME         A <domain-name> which specifies a mailbox which is the\n                proper rename of the specified mailbox.",
+        "char_start": 35411,
+        "char_end": 35537
+      }
+    ],
+    "reference_answer": "The experimental MR record supplied a new mailbox name (NEWNAME) to specify the rename target for an existing user mailbox.",
+    "type": "factual",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0667,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-04",
+    "question": "How do PTR resource records support reverse lookup mappings in specialized pointer domains?",
+    "doc_id": "dns_implementation",
+    "section": "3.3.12. PTR RDATA format",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "PTRDNAME        A <domain-name> which points to some location in the\n                domain name space.",
+        "char_start": 38199,
+        "char_end": 38302
+      }
+    ],
+    "reference_answer": "A PTR record holds a PTRDNAME pointing to another location in the domain space without triggering additional section lookups.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-05",
+    "question": "How does the Well Known Services record represent available port numbers on an interface?",
+    "doc_id": "dns_implementation",
+    "section": "3.4.2. WKS RDATA format",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "<BIT MAP>       A variable length bit map.  The bit map must be a\n                multiple of 8 bits long.",
+        "char_start": 43138,
+        "char_end": 43244
+      }
+    ],
+    "reference_answer": "The WKS record encodes active network ports in a variable-length bit map whose length is a multiple of 8 bits.",
+    "type": "factual",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-06",
+    "question": "Which standard resource record definitions share identical semantics and formats across all protocol classes?",
+    "doc_id": "dns_implementation",
+    "section": "3.3. Standard RRs",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "The following RR definitions are expected to occur, at least\npotentially, in all classes.  In particular, NS, SOA, CNAME, and PTR\nwill be used in all classes, and have the same format in all classes.\nBecause their RDATA format is known, all domain names in the RDATA\nsection of these RRs may be compressed.",
+        "char_start": 29313,
+        "char_end": 29619
+      }
+    ],
+    "reference_answer": "Standard records such as NS, SOA, CNAME, and PTR occur across all classes and maintain consistent formats across the domain protocol.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0606,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-07",
+    "question": "What unified protocol envelope encapsulates all message exchanges within the domain protocol?",
+    "doc_id": "dns_implementation",
+    "section": "4.1. Format",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "All communications inside of the domain protocol are carried in a single\nformat called a message.  The top level format of message is divided\ninto 5 sections (some of which are empty in certain cases) shown below:",
+        "char_start": 51902,
+        "char_end": 52115
+      }
+    ],
+    "reference_answer": "All domain communications use a unified message format divided into Header, Question, Answer, Authority, and Additional sections.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 3,
+    "lexical_overlap_jaccard": 0.1364,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-08",
+    "question": "What administrative role do text master files play in zone provisioning and resolver caching?",
+    "doc_id": "dns_implementation",
+    "section": "5. Master Files",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "Master files are text files that contain RRs in text form.  Since the\ncontents of a zone can be expressed in the form of a list of RRs a\nmaster file is most often used to define a zone, though it can be used\nto list a cache's contents.  Hence, this section first discusses the\nformat of RRs in a master file, and then the special considerations when\na master file is used to create a zone in some name server.",
+        "char_start": 69876,
+        "char_end": 70285
+      }
+    ],
+    "reference_answer": "Master files contain resource records in plain text and are used to define zone boundaries and populate cache bootstrap information.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.1212,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-09",
+    "question": "What standards exist in DNS for mapping personal mailboxes to domain hierarchies?",
+    "doc_id": "dns_implementation",
+    "section": "8. Mail Support\n\nThe Domain System Defines A Standard For Mapping Mailboxes Into Domain",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "The domain system defines a standard for mapping mailboxes into domain\nnames, and two methods for using the mailbox information to derive mail\nrouting information.  The first method is called mail exchange binding\nand the other method is mailbox binding.  The mailbox encoding standard\nand mail exchange binding are part of the DNS official protocol, and are\nthe recommended method for mail routing in the Internet.  Mailbox\nbinding is an experimental feature which is still under development and\nsubject to change.",
+        "char_start": 101449,
+        "char_end": 101964
+      }
+    ],
+    "reference_answer": "RFC 1035 specifies a standard for converting electronic mailboxes into domain names to route messages across the Internet.",
+    "type": "definition",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.1081,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-10",
+    "question": "How does DNS packet compression conserve message space when repeating domain labels?",
+    "doc_id": "dns_implementation",
+    "section": "4.1.4. Message compression",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "In order to reduce the size of messages, the domain system utilizes a\ncompression scheme which eliminates the repetition of domain names in a\nmessage.  In this scheme, an entire domain name or a list of labels at\nthe end of a domain name is replaced with a pointer to a prior occurance\nof the same name.",
+        "char_start": 62706,
+        "char_end": 63009
+      }
+    ],
+    "reference_answer": "DNS compression eliminates repeated domain names by replacing trailing labels with pointers to prior occurrences in the message.",
+    "type": "procedural",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.1481,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-11",
+    "question": "Why must responses to wildcard class queries avoid asserting authoritative status?",
+    "doc_id": "dns_implementation",
+    "section": "6.2. Standard query processing",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "When processing queries with QCLASS=*, or some other QCLASS which\nmatches multiple classes, the response should never be authoritative\nunless the server can guarantee that the response covers all classes.",
+        "char_start": 82037,
+        "char_end": 82241
+      }
+    ],
+    "reference_answer": "Responses to wildcard QCLASS=* queries should not claim authoritative status because a server cannot guarantee completeness across all classes.",
+    "type": "procedural",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.1,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-12",
+    "question": "What conversion step does a resolver carry out upon receiving an operating system lookup request?",
+    "doc_id": "dns_implementation",
+    "section": "7.1. Transforming a user request into a query",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "The first step a resolver takes is to transform the client's request,\nstated in a format suitable to the local OS, into a search specification\nfor RRs at a specific name which match a specific QTYPE and QCLASS.\nWhere possible, the QTYPE and QCLASS should correspond to a single type\nand a single class, because this makes the use of cached data much\nsimpler.  The reason for this is that the presence of data of one type\nin a cache doesn't confirm the existence or non-existence of data of\nother types, hence the only way to be sure is to consult an\nauthoritative source.  If QCLASS=* is used, then authoritative answers\nwon't be available.",
+        "char_start": 90116,
+        "char_end": 90756
+      }
+    ],
+    "reference_answer": "The resolver transforms local system client requests into standard domain search queries containing QNAME, QTYPE, and QCLASS.",
+    "type": "procedural",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.0526,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-13",
+    "question": "How is message wire framing optimized to maximize throughput and minimize packet size in DNS communications?",
+    "doc_id": "dns_implementation",
+    "section": "4.1. Format",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "All communications inside of the domain protocol are carried in a single\nformat called a message.  The top level format of message is divided\ninto 5 sections (some of which are empty in certain cases) shown below:",
+        "char_start": 51902,
+        "char_end": 52115
+      },
+      {
+        "doc_id": "dns_implementation",
+        "quote": "In order to reduce the size of messages, the domain system utilizes a\ncompression scheme which eliminates the repetition of domain names in a\nmessage.  In this scheme, an entire domain name or a list of labels at\nthe end of a domain name is replaced with a pointer to a prior occurance\nof the same name.",
+        "char_start": 62706,
+        "char_end": 63009
+      }
+    ],
+    "reference_answer": "DNS messages use a structured five-section envelope combined with compression pointers that replace redundant label sequences to reduce wire size.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0667,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "dns_impl-14",
+    "question": "How do static zone definitions in master files translate into live query responses across classes?",
+    "doc_id": "dns_implementation",
+    "section": "5. Master Files",
+    "evidence": [
+      {
+        "doc_id": "dns_implementation",
+        "quote": "Master files are text files that contain RRs in text form.  Since the\ncontents of a zone can be expressed in the form of a list of RRs a\nmaster file is most often used to define a zone, though it can be used\nto list a cache's contents.  Hence, this section first discusses the\nformat of RRs in a master file, and then the special considerations when\na master file is used to create a zone in some name server.",
+        "char_start": 69876,
+        "char_end": 70285
+      },
+      {
+        "doc_id": "dns_implementation",
+        "quote": "When processing queries with QCLASS=*, or some other QCLASS which\nmatches multiple classes, the response should never be authoritative\nunless the server can guarantee that the response covers all classes.",
+        "char_start": 82037,
+        "char_end": 82241
+      }
+    ],
+    "reference_answer": "Master files supply the declarative records that define zone contents, while query engines apply class-matching constraints to prevent non-authoritative cross-class leaks.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.087,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-01",
+    "question": "What does the Content-Language header convey regarding the intended recipients of a resource representation?",
+    "doc_id": "http",
+    "section": "8.5. Content-Language",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "The \"Content-Language\" header field describes the natural language(s)\n   of the intended audience for the representation.  Note that this\n   might not be equivalent to all the languages used within the\n   representation.",
+        "char_start": 145453,
+        "char_end": 145673
+      }
+    ],
+    "reference_answer": "The Content-Language header field identifies the natural languages intended for the audience of the representation.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 4,
+    "lexical_overlap_jaccard": 0.2632,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-02",
+    "question": "What information does a server communicate to clients through the Allow response header?",
+    "doc_id": "http",
+    "section": "10.2.1. Allow",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "The \"Allow\" header field lists the set of methods advertised as\n   supported by the target resource.  The purpose of this field is\n   strictly to inform the recipient of valid request methods associated\n   with the resource.",
+        "char_start": 223330,
+        "char_end": 223554
+      }
+    ],
+    "reference_answer": "The Allow header lists the methods advertised as supported by the target resource, informing recipients of valid request operations.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.0909,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-03",
+    "question": "How does a web server determine freshness when an incoming request provides a timestamp validator?",
+    "doc_id": "http",
+    "section": "13.1.3. If-Modified-Since",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "The \"If-Modified-Since\" header field makes a GET or HEAD request\n   method conditional on the selected representation's modification date\n   being more recent than the date provided in the field value.\n   Transfer of the selected representation's data is avoided if that\n   data has not changed.",
+        "char_start": 281408,
+        "char_end": 281703
+      }
+    ],
+    "reference_answer": "The If-Modified-Since header conditions GET or HEAD execution on the representation having been modified after the date in the field.",
+    "type": "factual",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0345,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-04",
+    "question": "What signal does receiving response code 304 convey to downstream browser caches regarding asset freshness?",
+    "doc_id": "http",
+    "section": "15.4.5. 304 Not Modified",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "The 304 (Not Modified) status code indicates that a conditional GET\n   or HEAD request has been received and would have resulted in a 200\n   (OK) response if it were not for the fact that the condition\n   evaluated to false.  In other words, there is no need for the server\n   to transfer a representation of the target resource because the\n   request indicates that the client, which made the request\n   conditional, already has a valid representation; the server is\n   therefore redirecting the client to make use of that stored\n   representation as if it were the content of a 200 (OK) response.",
+        "char_start": 350006,
+        "char_end": 350604
+      }
+    ],
+    "reference_answer": "The 304 status code indicates that a conditional GET or HEAD evaluated to false because the resource has not changed, allowing the client to use its cached version.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0682,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-05",
+    "question": "What body oversees the authoritative registry for HTTP content-coding names?",
+    "doc_id": "http",
+    "section": "16.6.1. Content Coding Registry",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "The \"HTTP Content Coding Registry\", maintained by IANA at\n   <https://www.iana.org/assignments/http-parameters/>, registers\n   content-coding names.",
+        "char_start": 393343,
+        "char_end": 393491
+      }
+    ],
+    "reference_answer": "The HTTP Content Coding Registry is maintained by IANA to record officially registered token names for content transformations.",
+    "type": "factual",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 3,
+    "lexical_overlap_jaccard": 0.3125,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-06",
+    "question": "What architectural attributes define the Hypertext Transfer Protocol family of protocols?",
+    "doc_id": "http",
+    "section": "1.1. Purpose",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "The Hypertext Transfer Protocol (HTTP) is a family of stateless,\n   application-level, request/response protocols that share a generic\n   interface, extensible semantics, and self-descriptive messages to\n   enable flexible interaction with network-based hypertext information\n   systems.",
+        "char_start": 13398,
+        "char_end": 13685
+      }
+    ],
+    "reference_answer": "HTTP is a family of stateless application-level request/response protocols sharing common interfaces and syntax for internet communication.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 4,
+    "lexical_overlap_jaccard": 0.1724,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-07",
+    "question": "How is an HTTP cache defined in terms of its purpose and operational components?",
+    "doc_id": "http",
+    "section": "3.8. Caches",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "A \"cache\" is a local store of previous response messages and the\n   subsystem that controls its message storage, retrieval, and deletion.\n   A cache stores cacheable responses in order to reduce the response\n   time and network bandwidth consumption on future, equivalent\n   requests.  Any client or server MAY employ a cache, though a cache\n   cannot be used while acting as a tunnel.",
+        "char_start": 43370,
+        "char_end": 43755
+      }
+    ],
+    "reference_answer": "An HTTP cache is a local repository of previous response messages that stores cacheable content to reduce response latency and network bandwidth.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0256,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-08",
+    "question": "What components form an individual field line within an HTTP header or trailer section?",
+    "doc_id": "http",
+    "section": "5.2. Field Lines and Combined Field Value",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "Field sections are composed of any number of \"field lines\", each with\n   a \"field name\" (see Section 5.1) identifying the field, and a \"field\n   line value\" that conveys data for that instance of the field.",
+        "char_start": 69112,
+        "char_end": 69318
+      }
+    ],
+    "reference_answer": "Field sections are composed of field lines, each featuring a field name identifying the field and an associated field line value.",
+    "type": "definition",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.1429,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-09",
+    "question": "What constitutes message content within the HTTP messaging model?",
+    "doc_id": "http",
+    "section": "6.4. Content",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "HTTP messages often transfer a complete or partial representation as\n   the message \"content\": a stream of octets sent after the header\n   section, as delineated by the message framing.",
+        "char_start": 95565,
+        "char_end": 95750
+      }
+    ],
+    "reference_answer": "HTTP message content is a stream of octets delivered following the header section that conveys a complete or partial representation.",
+    "type": "definition",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.15,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-10",
+    "question": "What explicit permissions must accompany an HTTP method for its response to be cached?",
+    "doc_id": "http",
+    "section": "9.2.3. Methods and Caching",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "For a cache to store and use a response, the associated method needs\n   to explicitly allow caching and to detail under what conditions a\n   response can be used to satisfy subsequent requests; a method\n   definition that does not do so cannot be cached.  For additional\n   requirements see [CACHING].",
+        "char_start": 183452,
+        "char_end": 183753
+      }
+    ],
+    "reference_answer": "For a cache to store and reuse an HTTP response, the associated method must explicitly allow caching and outline valid reuse conditions.",
+    "type": "procedural",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.1111,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-11",
+    "question": "How does an origin server utilize content negotiation to deliver tailored representations?",
+    "doc_id": "http",
+    "section": "12. Content Negotiation",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "When responses convey content, whether indicating a success or an\n   error, the origin server often has different ways of representing\n   that information; for example, in different formats, languages, or\n   encodings.  Likewise, different users or user agents might have\n   differing capabilities, characteristics, or preferences that could\n   influence which representation, among those available, would be best\n   to deliver.  For this reason, HTTP provides mechanisms for content\n   negotiation.",
+        "char_start": 244972,
+        "char_end": 245471
+      }
+    ],
+    "reference_answer": "Content negotiation enables origin servers to select the most appropriate representation format for a given message among alternative formats.",
+    "type": "procedural",
+    "difficulty": "medium",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.119,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-12",
+    "question": "What does receiving a 100 Continue status code instruct an HTTP client to do?",
+    "doc_id": "http",
+    "section": "15.2.1. 100 Continue",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "The 100 (Continue) status code indicates that the initial part of a\n   request has been received and has not yet been rejected by the\n   server.  The server intends to send a final response after the\n   request has been fully received and acted upon.",
+        "char_start": 321685,
+        "char_end": 321935
+      }
+    ],
+    "reference_answer": "The 100 Continue status code indicates the server has accepted the initial request headers and instructs the client to proceed with transmitting the payload.",
+    "type": "procedural",
+    "difficulty": "easy",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 4,
+    "lexical_overlap_jaccard": 0.1739,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-13",
+    "question": "How do intermediaries process conditional request failures along proxy chains?",
+    "doc_id": "http",
+    "section": "7.6. Message Forwarding",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "As described in Section 3.7, intermediaries can serve a variety of\n   roles in the processing of HTTP requests and responses.  Some\n   intermediaries are used to improve performance or availability.\n   Others are used for access control or to filter content.  Since an\n   HTTP stream has characteristics similar to a pipe-and-filter\n   architecture, there are no inherent limits to the extent an\n   intermediary can enhance (or interfere) with either direction of the\n   stream.",
+        "char_start": 117175,
+        "char_end": 117653
+      },
+      {
+        "doc_id": "http",
+        "quote": "The 412 (Precondition Failed) status code indicates that one or more\n   conditions given in the request header fields evaluated to false when\n   tested on the server (Section 13).  This response status code allows\n   the client to place preconditions on the current resource state (its\n   current representations and metadata) and, thus, prevent the request\n   method from being applied if the target resource is in an unexpected\n   state.",
+        "char_start": 362021,
+        "char_end": 362460
+      }
+    ],
+    "reference_answer": "Intermediaries serve varied forwarding roles across request chains, relaying 412 Precondition Failed responses when evaluated header preconditions test false on the server.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 1,
+    "lexical_overlap_jaccard": 0.0278,
+    "flagged_too_easy": false
+  },
+  {
+    "id": "http-14",
+    "question": "What governing principles dictate how web caches store and serve responses across methods?",
+    "doc_id": "http",
+    "section": "3.8. Caches",
+    "evidence": [
+      {
+        "doc_id": "http",
+        "quote": "A \"cache\" is a local store of previous response messages and the\n   subsystem that controls its message storage, retrieval, and deletion.\n   A cache stores cacheable responses in order to reduce the response\n   time and network bandwidth consumption on future, equivalent\n   requests.  Any client or server MAY employ a cache, though a cache\n   cannot be used while acting as a tunnel.",
+        "char_start": 43370,
+        "char_end": 43755
+      },
+      {
+        "doc_id": "http",
+        "quote": "For a cache to store and use a response, the associated method needs\n   to explicitly allow caching and to detail under what conditions a\n   response can be used to satisfy subsequent requests; a method\n   definition that does not do so cannot be cached.  For additional\n   requirements see [CACHING].",
+        "char_start": 183452,
+        "char_end": 183753
+      }
+    ],
+    "reference_answer": "Caches store past response messages locally to optimize latency, provided the associated request method explicitly authorizes caching under defined conditions.",
+    "type": "multi-hop",
+    "difficulty": "hard",
+    "verified": false,
+    "drafted_by": "llm",
+    "lexical_overlap_run": 2,
+    "lexical_overlap_jaccard": 0.0351,
+    "flagged_too_easy": false
+  }
+]

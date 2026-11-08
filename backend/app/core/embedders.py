@@ -210,17 +210,20 @@ class ModelEmbedder:
             library_versions=get_library_versions(),
         )
 
-    def embed_query(self, query: str) -> np.ndarray:
+    def embed_queries(self, queries: list[str], batch_size: int = 32) -> np.ndarray:
         """
-        Embed a single search query (applying query prefix).
-        Returns (1, D) L2-normalised float32 array.
+        Embed a list of search queries in batch (applying query prefix).
+        Returns (N, D) L2-normalised float32 array.
         """
+        if not queries:
+            return np.empty((0, self.config.embedding_dim), dtype=np.float32)
         model = self._load_model()
         prefix = self.config.query_prefix
-        full_query = prefix + query if prefix else query
+        full_queries = [prefix + q for q in queries] if prefix else queries
 
         emb = model.encode(
-            [full_query],
+            full_queries,
+            batch_size=batch_size,
             normalize_embeddings=self.config.normalize,
             convert_to_numpy=True,
             show_progress_bar=False,
@@ -231,3 +234,10 @@ class ModelEmbedder:
             norms[norms == 0] = 1e-12
             arr = arr / norms
         return arr
+
+    def embed_query(self, query: str) -> np.ndarray:
+        """
+        Embed a single search query (applying query prefix).
+        Returns (1, D) L2-normalised float32 array.
+        """
+        return self.embed_queries([query])

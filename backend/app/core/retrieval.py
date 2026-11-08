@@ -131,6 +131,13 @@ class RetrievalPipeline:
         self.index_manager = FaissIndexManager(self.artifacts_dir)
         self.models_config = load_models_config()
         self.corpus_hash = compute_corpus_hash(self.clean_dir)
+        self._embedder_cache: dict[str, ModelEmbedder] = {}
+
+    def get_embedder(self, model_id: str) -> ModelEmbedder:
+        if model_id not in self._embedder_cache:
+            m_cfg = self.models_config[model_id]
+            self._embedder_cache[model_id] = ModelEmbedder(m_cfg, seed=self.seed)
+        return self._embedder_cache[model_id]
 
     def get_or_build_index(
         self,
@@ -260,8 +267,7 @@ class RetrievalPipeline:
         Embed query, execute exact search in FAISS IndexFlatIP, and return ranked chunks with latency.
         """
         artifacts, _ = self.get_or_build_index(chunk_config, model_id, exclude_front_matter)
-        m_cfg = self.models_config[model_id]
-        embedder = ModelEmbedder(m_cfg, seed=self.seed)
+        embedder = self.get_embedder(model_id)
 
         t0 = time.perf_counter()
         q_emb = embedder.embed_query(query)
@@ -291,6 +297,51 @@ class RetrievalPipeline:
             results=results,
             latency_ms=round(elapsed_ms, 3),
         )
+
+    def retrieve_batch(
+        self,
+        queries: list[str],
+        chunk_config: dict[str, Any],
+        model_id: str,
+        k: int = 5,
+        exclude_front_matter: bool = True,
+    ) -> list[RetrievalResult]:
+        """
+        Batch embed multiple queries and retrieve top-k chunks from FAISS index.
+        """
+        artifacts, _ = self.get_or_build_index(chunk_config, model_id, exclude_front_matter)
+        embedder = self.get_embedder(model_id)
+
+        t0 = time.perf_counter()
+        q_embs = embedder.embed_queries(queries)
+        scores_mat, indices_mat = artifacts.index.search(q_embs, k)
+        total_elapsed_ms = (time.perf_counter() - t0) * 1000.0
+        avg_latency_ms = total_elapsed_ms / max(len(queries), 1)
+
+        batch_results: list[RetrievalResult] = []
+        for q_text, scores, indices in zip(queries, scores_mat, indices_mat):
+            r_chunks: list[RetrievedChunk] = []
+            for rank, (score, idx) in enumerate(zip(scores, indices), 1):
+                if idx < 0 or idx >= len(artifacts.chunks):
+                    continue
+                chunk = artifacts.chunks[idx]
+                r_chunks.append(
+                    RetrievedChunk(
+                        chunk_id=chunk.chunk_id,
+                        doc_id=chunk.doc_id,
+                        section=chunk.section,
+                        char_start=chunk.char_start,
+                        char_end=chunk.char_end,
+                        text=chunk.text,
+                        score=float(score),
+                        rank=rank,
+                    )
+                )
+            batch_results.append(
+                RetrievalResult(query=q_text, results=r_chunks, latency_ms=round(avg_latency_ms, 3))
+            )
+
+        return batch_results
 
     def benchmark_latency(
         self,

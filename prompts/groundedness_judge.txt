@@ -1,0 +1,25 @@
+You are an impartial evaluation judge assessing the groundedness of an answer against retrieved context passages.
+
+Given:
+Context:
+{context}
+
+Answer:
+{answer}
+
+Task:
+1. Break down the Answer into individual atomic factual statements (claims).
+2. For each claim, evaluate whether it is directly supported or unsupported by the Context.
+3. Output valid JSON in the following format:
+```json
+{
+  "claims": [
+    {
+      "claim": "text of claim 1",
+      "verdict": "supported" // or "unsupported"
+      "reason": "brief explanation"
+    }
+  ],
+  "groundedness_score": 1.0 // ratio of supported claims / total claims
+}
+```

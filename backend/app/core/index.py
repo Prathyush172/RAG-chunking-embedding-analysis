@@ -19,8 +19,9 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Optional
 
-import faiss
 import numpy as np
+import torch
+import faiss
 
 from .chunkers import Chunk
 
