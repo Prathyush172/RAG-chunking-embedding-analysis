@@ -89,6 +89,13 @@ class TestCliReviewRoundTrip:
             assert updated[0].reviewer == "Alice"
             assert updated[0].reviewed_at is not None
 
+    def test_validate_questions_cli(self, capsys):
+        """CLI validate-questions executes cleanly across dataset."""
+        cmd_validate_questions(argparse.Namespace())
+        captured = capsys.readouterr()
+        assert "[PASS]" in captured.out
+        assert "VALIDATING EVALUATION QUESTIONS" in captured.out
+
     def test_verified_only_fails_when_zero_verified(self):
         """CLI run --verified-only must fail if 0 questions are verified."""
         import os

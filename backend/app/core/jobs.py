@@ -48,7 +48,7 @@ PRESET_CONFIGS = {
         "configs": [
             "fixed_128_0", "fixed_128_15", "fixed_256_0", "fixed_256_15", "fixed_512_0", "fixed_512_15",
             "sent_128_0", "sent_128_1", "sent_256_0", "sent_256_1", "sent_512_0", "sent_512_1",
-            "semantic_default"
+            "semantic_default", "semantic_p15"
         ],
         "models": ["minilm", "bge_small", "e5_small"],
         "k": 5,

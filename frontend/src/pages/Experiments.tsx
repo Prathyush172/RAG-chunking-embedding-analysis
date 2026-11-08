@@ -27,7 +27,8 @@ const ALL_CONFIGS = [
   { id: "sent_256_1", label: "Sentence 256 / 1 ov" },
   { id: "sent_512_0", label: "Sentence 512 / 0 ov" },
   { id: "sent_512_1", label: "Sentence 512 / 1 ov" },
-  { id: "semantic", label: "Semantic (all-MiniLM break)" },
+  { id: "semantic_default", label: "Semantic (p25 break)" },
+  { id: "semantic_p15", label: "Semantic (p15 break)" },
 ];
 
 const ALL_MODELS = [
@@ -42,8 +43,8 @@ export const Experiments: React.FC = () => {
 
   // Builder Mode
   const [selectedPreset, setSelectedPreset] = useState<"quick" | "full" | "custom">("quick");
-  const [customConfigs, setCustomConfigs] = useState<string[]>(["fixed_256_0", "sent_256_0"]);
-  const [customModels, setCustomModels] = useState<string[]>(["minilm", "bge_small"]);
+  const [customConfigs, setCustomConfigs] = useState<string[]>(["fixed_256_0", "sent_256_0", "semantic_default"]);
+  const [customModels, setCustomModels] = useState<string[]>(["minilm", "bge_small", "e5_small"]);
   const [kValue, setKValue] = useState<number>(5);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
   const [evalGroundedness, setEvalGroundedness] = useState<boolean>(false);
@@ -60,14 +61,18 @@ export const Experiments: React.FC = () => {
   // Estimate Query
   const resolvedConfigs =
     selectedPreset === "quick"
-      ? ["fixed_256_0", "sent_256_0"]
+      ? ["fixed_256_0", "sent_256_0", "semantic_default"]
       : selectedPreset === "full"
-      ? ["fixed_128_0", "fixed_128_15", "fixed_256_0", "fixed_256_15", "fixed_512_0", "fixed_512_15", "sent_128_0", "sent_256_0", "sent_512_0"]
+      ? [
+          "fixed_128_0", "fixed_128_15", "fixed_256_0", "fixed_256_15", "fixed_512_0", "fixed_512_15",
+          "sent_128_0", "sent_128_1", "sent_256_0", "sent_256_1", "sent_512_0", "sent_512_1",
+          "semantic_default", "semantic_p15"
+        ]
       : customConfigs;
 
   const resolvedModels =
     selectedPreset === "quick"
-      ? ["minilm", "bge_small"]
+      ? ["minilm", "bge_small", "e5_small"]
       : selectedPreset === "full"
       ? ["minilm", "bge_small", "e5_small"]
       : customModels;

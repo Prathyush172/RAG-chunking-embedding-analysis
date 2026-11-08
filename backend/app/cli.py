@@ -553,6 +553,12 @@ def cmd_report(args: argparse.Namespace) -> None:
     _print_leaderboard_table(rows)
 
 
+def cmd_report_assets(args: argparse.Namespace) -> None:
+    from scripts.make_report_assets import find_target_run, generate_report_assets
+    target_dir = find_target_run(args.run)
+    generate_report_assets(target_dir)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="RFC RAG Chunking Lab CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -579,6 +585,10 @@ def main() -> None:
     # report
     subparsers.add_parser("report", help="Display leaderboard from latest run")
 
+    # report-assets
+    p_assets = subparsers.add_parser("report-assets", help="Generate publication tables, LaTeX, and figures")
+    p_assets.add_argument("--run", default="latest", help="Run ID or 'latest'")
+
     args = parser.parse_args()
 
     if args.command == "preprocess":
@@ -593,6 +603,8 @@ def main() -> None:
         cmd_run(args)
     elif args.command == "report":
         cmd_report(args)
+    elif args.command == "report-assets":
+        cmd_report_assets(args)
 
 
 if __name__ == "__main__":

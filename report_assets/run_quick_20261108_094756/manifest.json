@@ -1,0 +1,22 @@
+{
+  "run_id": "run_quick_20261108_094756",
+  "preset": "quick",
+  "k": 5,
+  "unverified_questions_included": true,
+  "verified_questions_count": 0,
+  "unverified_questions_count": 56,
+  "corpus_hash": "847ab41c0c755af662f9eabb244210fac358d793486be83e08213a5a2758d4b4",
+  "questions_hash": "06ba280be86a95428e2f4bd65ad111e29e90d8ee229f4eb7ee4c25a9a8cafc5d",
+  "library_versions": {
+    "python": "3.11.9",
+    "torch": "2.15.0+cpu",
+    "sentence_transformers": "6.2.0",
+    "transformers": "5.22.2",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "device": "cpu",
+  "seed": 42,
+  "timestamp_utc": "2026-11-08T09:48:11.197296",
+  "completed_runs": 10
+}

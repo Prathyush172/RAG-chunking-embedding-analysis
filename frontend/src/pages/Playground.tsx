@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Search,
   Plus,
   Trash2,
   Loader2,
+  BookmarkCheck,
 } from "lucide-react";
 import {
   api,
@@ -34,6 +35,17 @@ export const Playground: React.FC = () => {
     { chunk_config: "fixed_256_0", model_id: "minilm" },
     { chunk_config: "sent_256_0", model_id: "bge_small" },
   ]);
+
+  // Load eval questions to check for gold evidence matches
+  const { data: questions = [] } = useQuery({
+    queryKey: ["questions-list"],
+    queryFn: () => api.listQuestions(),
+  });
+
+  const matchedQuestion = questions.find(
+    (q) => q.question.trim().toLowerCase() === query.trim().toLowerCase()
+  );
+  const goldQuote = matchedQuestion?.evidence?.[0]?.quote;
 
   const addConfigSlot = () => {
     if (configs.length < 3) {
@@ -75,6 +87,27 @@ export const Playground: React.FC = () => {
   const resultData = queryMutation.data as PlaygroundResponse | undefined;
   const blocks: PlaygroundConfigResult[] = resultData?.configs || [];
 
+  const renderChunkText = (text: string) => {
+    if (!goldQuote || !text.includes(goldQuote)) {
+      return text;
+    }
+    const parts = text.split(goldQuote);
+    return (
+      <>
+        {parts.map((part, i) => (
+          <React.Fragment key={i}>
+            {part}
+            {i < parts.length - 1 && (
+              <mark className="bg-amber-300 dark:bg-amber-800 text-slate-900 dark:text-white px-1 py-0.5 rounded font-bold">
+                {goldQuote}
+              </mark>
+            )}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -92,6 +125,26 @@ export const Playground: React.FC = () => {
         onSubmit={handleExecute}
         className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
       >
+        {/* Matched question indicator */}
+        {matchedQuestion && (
+          <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 rounded-lg flex items-center gap-2 text-xs text-indigo-900 dark:text-indigo-200">
+            <BookmarkCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+            <span>
+              Query matches stored evaluation question <strong>{matchedQuestion.id}</strong> ({matchedQuestion.doc_id.toUpperCase()} §{matchedQuestion.section}). Gold evidence passage is automatically highlighted in amber within retrieved chunks.
+            </span>
+          </div>
+        )}
+
+        {/* Building index progress banner */}
+        {queryMutation.isPending && (
+          <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-lg flex items-center gap-2 text-xs text-amber-900 dark:text-amber-200">
+            <Loader2 className="w-4 h-4 animate-spin text-amber-600 dark:text-amber-400 flex-shrink-0" />
+            <span>
+              Building FAISS indexes & computing passage embeddings on CPU... (First evaluation per model/chunk configuration caches index artifacts to disk).
+            </span>
+          </div>
+        )}
+
         {/* Query Input */}
         <div>
           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
@@ -279,7 +332,7 @@ export const Playground: React.FC = () => {
                     </div>
 
                     <div className="font-mono text-[11px] leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-wrap bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-800">
-                      {chunk.text}
+                      {renderChunkText(chunk.text)}
                     </div>
                   </div>
                 ))}

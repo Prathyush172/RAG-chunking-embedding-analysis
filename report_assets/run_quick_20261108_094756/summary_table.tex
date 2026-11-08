@@ -1,0 +1,23 @@
+% IEEE style summary table with booktabs
+% [UNVERIFIED QUESTIONS INCLUDED] Run ID: run\_quick\_20261108\_094756
+\begin{table*}[t]
+\centering
+\caption{[UNVERIFIED QUESTIONS INCLUDED] Retrieval Performance Across Chunking Strategies and Embedding Models}
+\label{tab:retrieval_summary}
+\begin{tabular}{llcccccc}
+\toprule
+\textbf{Configuration} & \textbf{Model} & \textbf{Hit@5} & \textbf{MRR} & \textbf{P@5} & \textbf{R@5} & \textbf{Ctx Prec} & \textbf{Latency (ms)} \\
+\midrule
+fixed\_256\_0 & minilm & 69.6\% & 0.445 & 15.4\% & 58.8\% & 44.4\% & 14.6 \\
+fixed\_256\_0 & bge\_small & 55.4\% & 0.385 & 13.9\% & 49.0\% & 37.6\% & 22.7 \\
+fixed\_256\_0 & e5\_small & 75.0\% & 0.469 & 17.1\% & 63.2\% & 45.8\% & 18.6 \\
+sent\_256\_0 & minilm & 55.4\% & 0.337 & 12.5\% & 48.8\% & 33.5\% & 6.5 \\
+sent\_256\_0 & bge\_small & 58.9\% & 0.376 & 12.5\% & 47.3\% & 37.8\% & 16.9 \\
+sent\_256\_0 & e5\_small & 62.5\% & 0.441 & 13.6\% & 53.0\% & 43.7\% & 13.9 \\
+semantic\_default & minilm & 71.4\% & 0.515 & 15.4\% & 67.9\% & 51.7\% & 6.7 \\
+semantic\_default & bge\_small & 69.6\% & 0.540 & 15.0\% & 65.8\% & 53.5\% & 17.1 \\
+semantic\_default & e5\_small & 69.6\% & 0.548 & 14.6\% & 67.0\% & 54.8\% & 13.4 \\
+random\_baseline (mean of 100 draws) & none & 0.8\% & 0.003 & 0.2\% & 0.5\% & 0.3\% & 0.1 \\
+\bottomrule
+\end{tabular}
+\end{table*}

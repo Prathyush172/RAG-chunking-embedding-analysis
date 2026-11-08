@@ -1,0 +1,41 @@
+doc_id,config,model,sample_count,hit_at_k,mrr
+dns,fixed_256_0,bge_small,14,0.5,0.3452
+dns,fixed_256_0,e5_small,14,0.7143,0.5107
+dns,fixed_256_0,minilm,14,0.7143,0.3036
+dns,random_baseline (mean of 100 draws),none,14,0.0093,0.0039
+dns,semantic_default,bge_small,14,0.5714,0.4881
+dns,semantic_default,e5_small,14,0.6429,0.5893
+dns,semantic_default,minilm,14,0.7143,0.425
+dns,sent_256_0,bge_small,14,0.7143,0.4464
+dns,sent_256_0,e5_small,14,0.8571,0.6012
+dns,sent_256_0,minilm,14,0.5714,0.381
+dns_implementation,fixed_256_0,bge_small,14,0.5714,0.3417
+dns_implementation,fixed_256_0,e5_small,14,0.6429,0.3536
+dns_implementation,fixed_256_0,minilm,14,0.5,0.3952
+dns_implementation,random_baseline (mean of 100 draws),none,14,0.0071,0.002
+dns_implementation,semantic_default,bge_small,14,0.7143,0.5143
+dns_implementation,semantic_default,e5_small,14,0.7143,0.4369
+dns_implementation,semantic_default,minilm,14,0.5714,0.3774
+dns_implementation,sent_256_0,bge_small,14,0.5,0.2488
+dns_implementation,sent_256_0,e5_small,14,0.5714,0.3476
+dns_implementation,sent_256_0,minilm,14,0.5714,0.2619
+http,fixed_256_0,bge_small,14,0.6429,0.425
+http,fixed_256_0,e5_small,14,0.9286,0.4512
+http,fixed_256_0,minilm,14,0.7857,0.5833
+http,random_baseline (mean of 100 draws),none,14,0.0107,0.0047
+http,semantic_default,bge_small,14,0.7143,0.5
+http,semantic_default,e5_small,14,0.6429,0.5417
+http,semantic_default,minilm,14,0.7857,0.6667
+http,sent_256_0,bge_small,14,0.5714,0.381
+http,sent_256_0,e5_small,14,0.4286,0.2976
+http,sent_256_0,minilm,14,0.4286,0.2619
+tcp,fixed_256_0,bge_small,14,0.5,0.4286
+tcp,fixed_256_0,e5_small,14,0.7143,0.5595
+tcp,fixed_256_0,minilm,14,0.7857,0.4964
+tcp,random_baseline (mean of 100 draws),none,14,0.005,0.0023
+tcp,semantic_default,bge_small,14,0.7857,0.6571
+tcp,semantic_default,e5_small,14,0.7857,0.625
+tcp,semantic_default,minilm,14,0.7857,0.5917
+tcp,sent_256_0,bge_small,14,0.5714,0.4286
+tcp,sent_256_0,e5_small,14,0.6429,0.5179
+tcp,sent_256_0,minilm,14,0.6429,0.4429

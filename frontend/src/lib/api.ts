@@ -191,6 +191,8 @@ export const api = {
     fetchJson<ParetoPoint[]>(`/api/results/${expId}/pareto`),
   getQuestionDrilldown: (expId: string, qid: string) =>
     fetchJson<any>(`/api/results/${expId}/questions/${qid}`),
+  getPerDoc: (expId: string) =>
+    fetchJson<Record<string, Record<string, any>>>(`/api/results/${expId}/per-doc`),
 
   // Compare
   compareRuns: (req: CompareRequest) =>

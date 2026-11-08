@@ -5,6 +5,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { ExperimentProvider } from "./context/ExperimentContext";
 import { AppShell } from "./components/layout/AppShell";
 
+import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { Overview } from "./pages/Overview";
 import { Dataset } from "./pages/Dataset";
 import { Review } from "./pages/Review";
@@ -15,6 +16,7 @@ import { Playground } from "./pages/Playground";
 import { DecisionMatrix } from "./pages/DecisionMatrix";
 import { Export } from "./pages/Export";
 import { Settings } from "./pages/Settings";
+import { NotFound } from "./pages/NotFound";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,21 +33,23 @@ export const App: React.FC = () => {
       <ThemeProvider>
         <ExperimentProvider>
           <BrowserRouter>
-            <AppShell>
-              <Routes>
-                <Route path="/" element={<Overview />} />
-                <Route path="/dataset" element={<Dataset />} />
-                <Route path="/review" element={<Review />} />
-                <Route path="/experiments" element={<Experiments />} />
-                <Route path="/results" element={<Results />} />
-                <Route path="/compare" element={<Compare />} />
-                <Route path="/playground" element={<Playground />} />
-                <Route path="/decision-matrix" element={<DecisionMatrix />} />
-                <Route path="/export" element={<Export />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </AppShell>
+            <ErrorBoundary>
+              <AppShell>
+                <Routes>
+                  <Route path="/" element={<Overview />} />
+                  <Route path="/dataset" element={<Dataset />} />
+                  <Route path="/review" element={<Review />} />
+                  <Route path="/experiments" element={<Experiments />} />
+                  <Route path="/results" element={<Results />} />
+                  <Route path="/compare" element={<Compare />} />
+                  <Route path="/playground" element={<Playground />} />
+                  <Route path="/decision-matrix" element={<DecisionMatrix />} />
+                  <Route path="/export" element={<Export />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AppShell>
+            </ErrorBoundary>
           </BrowserRouter>
         </ExperimentProvider>
       </ThemeProvider>

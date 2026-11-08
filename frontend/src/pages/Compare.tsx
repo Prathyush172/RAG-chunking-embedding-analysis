@@ -65,6 +65,18 @@ export const Compare: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
+      {/* GLOBAL UNVERIFIED BANNER */}
+      {activeExperiment.has_unverified && (
+        <div className="bg-amber-500/15 border-2 border-amber-500/50 dark:bg-amber-950/40 dark:border-amber-600/60 p-4 rounded-xl flex items-start gap-3 shadow-xs">
+          <div className="text-xs text-amber-900 dark:text-amber-200">
+            <span className="font-bold text-sm block mb-0.5">
+              NOTICE: UNVERIFIED QUESTIONS INCLUDED IN EVALUATION
+            </span>
+            This comparison was evaluated over unverified draft questions ({activeExperiment.unverified_questions_count} unverified). P-values and statistical deltas reflect unverified test samples.
+          </div>
+        </div>
+      )}
+
       {/* Top Header */}
       <div>
         <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -74,6 +86,45 @@ export const Compare: React.FC = () => {
           Controlled statistical testing (paired differences with bootstrap 95% CIs and Wilcoxon signed-rank test).
         </p>
       </div>
+
+      {/* PLAIN-LANGUAGE STATISTICAL SUMMARY */}
+      {compareData && (
+        <div
+          className={`p-4 rounded-xl border text-xs leading-relaxed ${
+            (compareData.metrics.find((m) => m.metric === "hit_at_k")?.p_value ?? 1.0) >= 0.05
+              ? "bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+              : (compareData.metrics.find((m) => m.metric === "hit_at_k")?.delta ?? 0) > 0
+              ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200"
+              : "bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200"
+          }`}
+        >
+          <div className="font-bold text-sm mb-1">
+            Statistical Significance Verdict:
+          </div>
+          {(() => {
+            const hitMetric = compareData.metrics.find((m) => m.metric === "hit_at_k") || compareData.metrics[0];
+            if (!hitMetric || hitMetric.p_value >= 0.05) {
+              return (
+                <span>
+                  The observed retrieval difference between <strong>Configuration A ({baseConfig} + {baseModel})</strong> and <strong>Configuration B ({targetConfig} + {targetModel})</strong> is not statistically significant (p = {hitMetric ? hitMetric.p_value.toFixed(4) : "1.0000"} &ge; 0.05). Based on this controlled empirical comparison, <strong>neither strategy can be claimed superior</strong>.
+                </span>
+              );
+            }
+            if (hitMetric.delta > 0) {
+              return (
+                <span>
+                  <strong>Candidate Configuration B ({targetConfig} + {targetModel})</strong> achieved a statistically significant improvement over <strong>Baseline A ({baseConfig} + {baseModel})</strong> on {hitMetric.metric} (&Delta; = +{hitMetric.delta.toFixed(3)}, p = {hitMetric.p_value.toFixed(4)} &lt; 0.05, 95% CI [{hitMetric.delta_ci_lower.toFixed(3)}, {hitMetric.delta_ci_upper.toFixed(3)}]).
+                </span>
+              );
+            }
+            return (
+              <span>
+                <strong>Baseline Configuration A ({baseConfig} + {baseModel})</strong> significantly outperformed <strong>Candidate B ({targetConfig} + {targetModel})</strong> on {hitMetric.metric} (&Delta; = {hitMetric.delta.toFixed(3)}, p = {hitMetric.p_value.toFixed(4)} &lt; 0.05).
+              </span>
+            );
+          })()}
+        </div>
+      )}
 
       {/* Pickers Bar */}
       <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 relative">
