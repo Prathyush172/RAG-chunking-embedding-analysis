@@ -1,0 +1,3812 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RFC RAG Chunking Lab API",
+    "description": "REST backend for comparative empirical analysis of chunking strategies and embedding models on technical RFC documentation.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Get Health",
+        "operationId": "get_health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/corpus/documents": {
+      "get": {
+        "tags": [
+          "corpus"
+        ],
+        "summary": "List Documents",
+        "operationId": "list_documents_api_corpus_documents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentSummary"
+                  },
+                  "type": "array",
+                  "title": "Response List Documents Api Corpus Documents Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/corpus/documents/{doc_id}/text": {
+      "get": {
+        "tags": [
+          "corpus"
+        ],
+        "summary": "Get Document Text",
+        "operationId": "get_document_text_api_corpus_documents__doc_id__text_get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Get Document Text Api Corpus Documents  Doc Id  Text Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/corpus/documents/{doc_id}/sections": {
+      "get": {
+        "tags": [
+          "corpus"
+        ],
+        "summary": "Get Document Sections",
+        "operationId": "get_document_sections_api_corpus_documents__doc_id__sections_get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SectionOutlineItem"
+                  },
+                  "title": "Response Get Document Sections Api Corpus Documents  Doc Id  Sections Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/corpus/search": {
+      "get": {
+        "tags": [
+          "corpus"
+        ],
+        "summary": "Search Corpus",
+        "operationId": "search_corpus_api_corpus_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Search query",
+              "title": "Q"
+            },
+            "description": "Search query"
+          },
+          {
+            "name": "doc_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional document ID to limit search",
+              "title": "Doc Id"
+            },
+            "description": "Optional document ID to limit search"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SearchMatchItem"
+                  },
+                  "title": "Response Search Corpus Api Corpus Search Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "List Questions",
+        "operationId": "list_questions_api_questions_get",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Doc Id"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          },
+          {
+            "name": "difficulty",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Difficulty"
+            }
+          },
+          {
+            "name": "verified",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Verified"
+            }
+          },
+          {
+            "name": "flagged_too_easy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Flagged Too Easy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionSchema"
+                  },
+                  "title": "Response List Questions Api Questions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Create Question",
+        "operationId": "create_question_api_questions_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionCreateSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/stats": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Get Questions Stats",
+        "operationId": "get_questions_stats_api_questions_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/review/progress": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Get Review Progress",
+        "operationId": "get_review_progress_api_questions_review_progress_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewProgressResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/review/next": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Get Next Unverified Question",
+        "operationId": "get_next_unverified_question_api_questions_review_next_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/QuestionSchema"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Next Unverified Question Api Questions Review Next Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/validate": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Validate All Questions",
+        "operationId": "validate_all_questions_api_questions_validate_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/export": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Export Questions Csv",
+        "operationId": "export_questions_csv_api_questions_export_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/import": {
+      "post": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Import Questions Csv",
+        "operationId": "import_questions_csv_api_questions_import_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Import Questions Csv Api Questions Import Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}": {
+      "get": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Get Question",
+        "operationId": "get_question_api_questions__qid__get",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Update Question",
+        "operationId": "update_question_api_questions__qid__put",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionUpdateSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "questions"
+        ],
+        "summary": "Delete Question",
+        "operationId": "delete_question_api_questions__qid__delete",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Delete Question Api Questions  Qid  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/configs/presets": {
+      "get": {
+        "tags": [
+          "configs"
+        ],
+        "summary": "Get Presets",
+        "operationId": "get_presets_api_configs_presets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PresetInfo"
+                  },
+                  "type": "array",
+                  "title": "Response Get Presets Api Configs Presets Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/configs/models": {
+      "get": {
+        "tags": [
+          "configs"
+        ],
+        "summary": "Get Models",
+        "operationId": "get_models_api_configs_models_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ModelInfo"
+                  },
+                  "type": "array",
+                  "title": "Response Get Models Api Configs Models Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/configs/chunkers": {
+      "get": {
+        "tags": [
+          "configs"
+        ],
+        "summary": "Get Chunkers",
+        "operationId": "get_chunkers_api_configs_chunkers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ChunkerInfo"
+                  },
+                  "type": "array",
+                  "title": "Response Get Chunkers Api Configs Chunkers Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/configs/estimate": {
+      "post": {
+        "tags": [
+          "configs"
+        ],
+        "summary": "Estimate Compute",
+        "operationId": "estimate_compute_api_configs_estimate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments": {
+      "get": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "List Experiments",
+        "operationId": "list_experiments_api_experiments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ExperimentResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Experiments Api Experiments Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "Create Experiment",
+        "operationId": "create_experiment_api_experiments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperimentCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{exp_id}": {
+      "get": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "Get Experiment",
+        "operationId": "get_experiment_api_experiments__exp_id__get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "Delete Experiment",
+        "operationId": "delete_experiment_api_experiments__exp_id__delete",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Delete Experiment Api Experiments  Exp Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{exp_id}/events": {
+      "get": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "Stream Experiment Events",
+        "operationId": "stream_experiment_events_api_experiments__exp_id__events_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{exp_id}/log": {
+      "get": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "Get Experiment Log",
+        "operationId": "get_experiment_log_api_experiments__exp_id__log_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          },
+          {
+            "name": "tail",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 100,
+              "title": "Tail"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Experiment Log Api Experiments  Exp Id  Log Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{exp_id}/cancel": {
+      "post": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "Cancel Experiment",
+        "operationId": "cancel_experiment_api_experiments__exp_id__cancel_post",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Cancel Experiment Api Experiments  Exp Id  Cancel Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments/{exp_id}/resume": {
+      "post": {
+        "tags": [
+          "experiments"
+        ],
+        "summary": "Resume Experiment",
+        "operationId": "resume_experiment_api_experiments__exp_id__resume_post",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/results/{exp_id}/summary": {
+      "get": {
+        "tags": [
+          "results"
+        ],
+        "summary": "Get Experiment Summary",
+        "operationId": "get_experiment_summary_api_results__exp_id__summary_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultSummaryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/results/{exp_id}/per-query": {
+      "get": {
+        "tags": [
+          "results"
+        ],
+        "summary": "Get Experiment Per Query",
+        "operationId": "get_experiment_per_query_api_results__exp_id__per_query_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          },
+          {
+            "name": "config",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Config"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Model"
+            }
+          },
+          {
+            "name": "doc_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Doc Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResultPerQueryItem"
+                  },
+                  "title": "Response Get Experiment Per Query Api Results  Exp Id  Per Query Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/results/{exp_id}/per-doc": {
+      "get": {
+        "tags": [
+          "results"
+        ],
+        "summary": "Get Experiment Per Doc",
+        "operationId": "get_experiment_per_doc_api_results__exp_id__per_doc_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Experiment Per Doc Api Results  Exp Id  Per Doc Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/results/{exp_id}/questions/{qid}": {
+      "get": {
+        "tags": [
+          "results"
+        ],
+        "summary": "Inspect Question Across Runs",
+        "operationId": "inspect_question_across_runs_api_results__exp_id__questions__qid__get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          },
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Inspect Question Across Runs Api Results  Exp Id  Questions  Qid  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/results/{exp_id}/pareto": {
+      "get": {
+        "tags": [
+          "results"
+        ],
+        "summary": "Get Pareto Points",
+        "operationId": "get_pareto_points_api_results__exp_id__pareto_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParetoPoint"
+                  },
+                  "title": "Response Get Pareto Points Api Results  Exp Id  Pareto Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/results/{exp_id}/heatmap": {
+      "get": {
+        "tags": [
+          "results"
+        ],
+        "summary": "Get Heatmap",
+        "operationId": "get_heatmap_api_results__exp_id__heatmap_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          },
+          {
+            "name": "metric",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "hit_at_k, mrr, precision_at_k, recall_at_k, context_precision, context_recall",
+              "default": "hit_at_k",
+              "title": "Metric"
+            },
+            "description": "hit_at_k, mrr, precision_at_k, recall_at_k, context_precision, context_recall"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeatmapResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/compare": {
+      "post": {
+        "tags": [
+          "compare"
+        ],
+        "summary": "Compare Runs",
+        "operationId": "compare_runs_api_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playground/query": {
+      "post": {
+        "tags": [
+          "playground"
+        ],
+        "summary": "Execute Playground Query",
+        "operationId": "execute_playground_query_api_playground_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaygroundRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaygroundResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decision-matrix/presets": {
+      "get": {
+        "tags": [
+          "decision-matrix"
+        ],
+        "summary": "Get Decision Presets",
+        "operationId": "get_decision_presets_api_decision_matrix_presets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DecisionMatrixPreset"
+                  },
+                  "type": "array",
+                  "title": "Response Get Decision Presets Api Decision Matrix Presets Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decision-matrix": {
+      "post": {
+        "tags": [
+          "decision-matrix"
+        ],
+        "summary": "Compute Decision Matrix",
+        "operationId": "compute_decision_matrix_api_decision_matrix_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionMatrixRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DecisionMatrixRankItem"
+                  },
+                  "type": "array",
+                  "title": "Response Compute Decision Matrix Api Decision Matrix Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/export/{exp_id}/summary": {
+      "get": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Export Summary",
+        "operationId": "export_summary_api_export__exp_id__summary_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(csv|markdown|latex)$",
+              "default": "csv",
+              "title": "Format"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/export/{exp_id}/manifest": {
+      "get": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Get Manifest",
+        "operationId": "get_manifest_api_export__exp_id__manifest_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Manifest Api Export  Exp Id  Manifest Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/export/{exp_id}/methodology": {
+      "get": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Get Methodology Doc",
+        "operationId": "get_methodology_doc_api_export__exp_id__methodology_get",
+        "parameters": [
+          {
+            "name": "exp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Exp Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Get Methodology Doc Api Export  Exp Id  Methodology Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Get Settings",
+        "operationId": "get_settings_api_settings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsSchema"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Update Settings",
+        "operationId": "update_settings_api_settings_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsUpdateSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings/clear-cache": {
+      "post": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Clear Caches",
+        "operationId": "clear_caches_api_settings_clear_cache_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Clear Caches Api Settings Clear Cache Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChunkerInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "strategy": {
+            "type": "string",
+            "title": "Strategy"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Parameters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "strategy",
+          "description",
+          "parameters"
+        ],
+        "title": "ChunkerInfo"
+      },
+      "CompareRequest": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "base_config": {
+            "type": "string",
+            "title": "Base Config"
+          },
+          "base_model": {
+            "type": "string",
+            "title": "Base Model"
+          },
+          "target_config": {
+            "type": "string",
+            "title": "Target Config"
+          },
+          "target_model": {
+            "type": "string",
+            "title": "Target Model"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "base_config",
+          "base_model",
+          "target_config",
+          "target_model"
+        ],
+        "title": "CompareRequest"
+      },
+      "CompareResponse": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "base_label": {
+            "type": "string",
+            "title": "Base Label"
+          },
+          "target_label": {
+            "type": "string",
+            "title": "Target Label"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/MetricDeltaItem"
+            },
+            "type": "array",
+            "title": "Metrics"
+          },
+          "win_loss_tie": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Win Loss Tie"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "base_label",
+          "target_label",
+          "metrics",
+          "win_loss_tie"
+        ],
+        "title": "CompareResponse"
+      },
+      "DecisionMatrixPreset": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "weights": {
+            "$ref": "#/components/schemas/DecisionMatrixWeights"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "weights"
+        ],
+        "title": "DecisionMatrixPreset"
+      },
+      "DecisionMatrixRankItem": {
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "config": {
+            "type": "string",
+            "title": "Config"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "total_utility_score": {
+            "type": "number",
+            "title": "Total Utility Score"
+          },
+          "subscores": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Subscores"
+          },
+          "raw_metrics": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Raw Metrics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rank",
+          "config",
+          "model",
+          "total_utility_score",
+          "subscores",
+          "raw_metrics"
+        ],
+        "title": "DecisionMatrixRankItem"
+      },
+      "DecisionMatrixRequest": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "weights": {
+            "$ref": "#/components/schemas/DecisionMatrixWeights"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id"
+        ],
+        "title": "DecisionMatrixRequest"
+      },
+      "DecisionMatrixWeights": {
+        "properties": {
+          "hit_at_k": {
+            "type": "number",
+            "title": "Hit At K",
+            "default": 0.25
+          },
+          "mrr": {
+            "type": "number",
+            "title": "Mrr",
+            "default": 0.2
+          },
+          "context_precision": {
+            "type": "number",
+            "title": "Context Precision",
+            "default": 0.15
+          },
+          "context_recall": {
+            "type": "number",
+            "title": "Context Recall",
+            "default": 0.15
+          },
+          "latency": {
+            "type": "number",
+            "title": "Latency",
+            "default": 0.1
+          },
+          "index_size": {
+            "type": "number",
+            "title": "Index Size",
+            "default": 0.05
+          },
+          "cost": {
+            "type": "number",
+            "title": "Cost",
+            "default": 0.1
+          }
+        },
+        "type": "object",
+        "title": "DecisionMatrixWeights"
+      },
+      "DocumentSummary": {
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "rfc_number": {
+            "type": "integer",
+            "title": "Rfc Number"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "char_count": {
+            "type": "integer",
+            "title": "Char Count"
+          },
+          "token_count": {
+            "type": "integer",
+            "title": "Token Count"
+          },
+          "section_count": {
+            "type": "integer",
+            "title": "Section Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "doc_id",
+          "rfc_number",
+          "title",
+          "source_url",
+          "char_count",
+          "token_count",
+          "section_count"
+        ],
+        "title": "DocumentSummary"
+      },
+      "EstimateRequest": {
+        "properties": {
+          "chunk_configs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Chunk Configs"
+          },
+          "models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Models"
+          },
+          "questions_count": {
+            "type": "integer",
+            "title": "Questions Count",
+            "default": 56
+          },
+          "k": {
+            "type": "integer",
+            "title": "K",
+            "default": 5
+          }
+        },
+        "type": "object",
+        "required": [
+          "chunk_configs",
+          "models"
+        ],
+        "title": "EstimateRequest"
+      },
+      "EstimateResponse": {
+        "properties": {
+          "total_combinations": {
+            "type": "integer",
+            "title": "Total Combinations"
+          },
+          "estimated_preprocessing_sec": {
+            "type": "number",
+            "title": "Estimated Preprocessing Sec"
+          },
+          "estimated_indexing_sec": {
+            "type": "number",
+            "title": "Estimated Indexing Sec"
+          },
+          "estimated_eval_sec": {
+            "type": "number",
+            "title": "Estimated Eval Sec"
+          },
+          "total_estimated_sec": {
+            "type": "number",
+            "title": "Total Estimated Sec"
+          },
+          "estimated_index_size_mb": {
+            "type": "number",
+            "title": "Estimated Index Size Mb"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_combinations",
+          "estimated_preprocessing_sec",
+          "estimated_indexing_sec",
+          "estimated_eval_sec",
+          "total_estimated_sec",
+          "estimated_index_size_mb"
+        ],
+        "title": "EstimateResponse"
+      },
+      "EvidenceItemSchema": {
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "quote": {
+            "type": "string",
+            "title": "Quote"
+          },
+          "char_start": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Char Start"
+          },
+          "char_end": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Char End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "doc_id",
+          "quote"
+        ],
+        "title": "EvidenceItemSchema"
+      },
+      "ExperimentCreateRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "preset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preset",
+            "default": "quick"
+          },
+          "configs": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Configs"
+          },
+          "models": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Models"
+          },
+          "k": {
+            "type": "integer",
+            "title": "K",
+            "default": 5
+          },
+          "verified_only": {
+            "type": "boolean",
+            "title": "Verified Only",
+            "default": false
+          },
+          "llm_judge": {
+            "type": "string",
+            "title": "Llm Judge",
+            "default": "mock"
+          }
+        },
+        "type": "object",
+        "title": "ExperimentCreateRequest"
+      },
+      "ExperimentResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "preset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preset"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "verified_only": {
+            "type": "boolean",
+            "title": "Verified Only"
+          },
+          "verified_questions_count": {
+            "type": "integer",
+            "title": "Verified Questions Count"
+          },
+          "unverified_questions_count": {
+            "type": "integer",
+            "title": "Unverified Questions Count"
+          },
+          "has_unverified": {
+            "type": "boolean",
+            "title": "Has Unverified"
+          },
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/ExperimentRunResponse"
+            },
+            "type": "array",
+            "title": "Runs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "preset",
+          "status",
+          "created_at",
+          "started_at",
+          "finished_at",
+          "error",
+          "verified_only",
+          "verified_questions_count",
+          "unverified_questions_count",
+          "has_unverified"
+        ],
+        "title": "ExperimentResponse"
+      },
+      "ExperimentRunResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "chunk_config": {
+            "type": "string",
+            "title": "Chunk Config"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "progress": {
+            "type": "number",
+            "title": "Progress"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "chunk_config",
+          "model_id",
+          "status",
+          "stage",
+          "progress"
+        ],
+        "title": "ExperimentRunResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "ok"
+          },
+          "device": {
+            "type": "string",
+            "title": "Device",
+            "default": "cpu"
+          },
+          "faiss_threads": {
+            "type": "integer",
+            "title": "Faiss Threads",
+            "default": 1
+          },
+          "python_version": {
+            "type": "string",
+            "title": "Python Version"
+          },
+          "corpus_hash": {
+            "type": "string",
+            "title": "Corpus Hash"
+          },
+          "questions_hash": {
+            "type": "string",
+            "title": "Questions Hash"
+          },
+          "indexed_configs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Indexed Configs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "python_version",
+          "corpus_hash",
+          "questions_hash"
+        ],
+        "title": "HealthResponse"
+      },
+      "HeatmapResponse": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "title": "Metric"
+          },
+          "strategies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Strategies"
+          },
+          "models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Models"
+          },
+          "matrix": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Matrix"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "strategies",
+          "models",
+          "matrix"
+        ],
+        "title": "HeatmapResponse"
+      },
+      "MetricDeltaItem": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "title": "Metric"
+          },
+          "base_mean": {
+            "type": "number",
+            "title": "Base Mean"
+          },
+          "target_mean": {
+            "type": "number",
+            "title": "Target Mean"
+          },
+          "delta": {
+            "type": "number",
+            "title": "Delta"
+          },
+          "delta_ci_lower": {
+            "type": "number",
+            "title": "Delta Ci Lower"
+          },
+          "delta_ci_upper": {
+            "type": "number",
+            "title": "Delta Ci Upper"
+          },
+          "p_value": {
+            "type": "number",
+            "title": "P Value"
+          },
+          "statistically_significant": {
+            "type": "boolean",
+            "title": "Statistically Significant"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "base_mean",
+          "target_mean",
+          "delta",
+          "delta_ci_lower",
+          "delta_ci_upper",
+          "p_value",
+          "statistically_significant"
+        ],
+        "title": "MetricDeltaItem"
+      },
+      "ModelInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "huggingface_id": {
+            "type": "string",
+            "title": "Huggingface Id"
+          },
+          "dimension": {
+            "type": "integer",
+            "title": "Dimension"
+          },
+          "max_tokens": {
+            "type": "integer",
+            "title": "Max Tokens"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "supports_prefix": {
+            "type": "boolean",
+            "title": "Supports Prefix"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "huggingface_id",
+          "dimension",
+          "max_tokens",
+          "description",
+          "supports_prefix"
+        ],
+        "title": "ModelInfo"
+      },
+      "ParetoPoint": {
+        "properties": {
+          "config": {
+            "type": "string",
+            "title": "Config"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "hit_at_k": {
+            "type": "number",
+            "title": "Hit At K"
+          },
+          "mrr": {
+            "type": "number",
+            "title": "Mrr"
+          },
+          "mean_latency_ms": {
+            "type": "number",
+            "title": "Mean Latency Ms"
+          },
+          "index_size_mb": {
+            "type": "number",
+            "title": "Index Size Mb"
+          },
+          "avg_tokens": {
+            "type": "number",
+            "title": "Avg Tokens"
+          },
+          "chunk_count": {
+            "type": "integer",
+            "title": "Chunk Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "config",
+          "model",
+          "hit_at_k",
+          "mrr",
+          "mean_latency_ms",
+          "index_size_mb",
+          "avg_tokens",
+          "chunk_count"
+        ],
+        "title": "ParetoPoint"
+      },
+      "PlaygroundRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "chunk_config": {
+            "type": "string",
+            "title": "Chunk Config",
+            "default": "fixed_256_0"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id",
+            "default": "minilm"
+          },
+          "k": {
+            "type": "integer",
+            "title": "K",
+            "default": 5
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "PlaygroundRequest"
+      },
+      "PlaygroundResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "chunk_config": {
+            "type": "string",
+            "title": "Chunk Config"
+          },
+          "model_id": {
+            "type": "string",
+            "title": "Model Id"
+          },
+          "k": {
+            "type": "integer",
+            "title": "K"
+          },
+          "latency_ms": {
+            "type": "number",
+            "title": "Latency Ms"
+          },
+          "retrieved_chunks": {
+            "items": {
+              "$ref": "#/components/schemas/RetrievedChunkDetail"
+            },
+            "type": "array",
+            "title": "Retrieved Chunks"
+          },
+          "matched_gold_question": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuestionSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gold_overlap": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gold Overlap"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "chunk_config",
+          "model_id",
+          "k",
+          "latency_ms",
+          "retrieved_chunks"
+        ],
+        "title": "PlaygroundResponse"
+      },
+      "PresetInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "chunk_configs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Chunk Configs"
+          },
+          "models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Models"
+          },
+          "k": {
+            "type": "integer",
+            "title": "K"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "chunk_configs",
+          "models",
+          "k"
+        ],
+        "title": "PresetInfo"
+      },
+      "QuestionCreateSchema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItemSchema"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "reference_answer": {
+            "type": "string",
+            "title": "Reference Answer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "factual",
+              "definition",
+              "procedural",
+              "multi-hop"
+            ],
+            "title": "Type"
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": [
+              "easy",
+              "medium",
+              "hard"
+            ],
+            "title": "Difficulty"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "doc_id",
+          "evidence",
+          "reference_answer",
+          "type",
+          "difficulty"
+        ],
+        "title": "QuestionCreateSchema"
+      },
+      "QuestionSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "section": {
+            "type": "string",
+            "title": "Section"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItemSchema"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "reference_answer": {
+            "type": "string",
+            "title": "Reference Answer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "factual",
+              "definition",
+              "procedural",
+              "multi-hop"
+            ],
+            "title": "Type"
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": [
+              "easy",
+              "medium",
+              "hard"
+            ],
+            "title": "Difficulty"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "default": false
+          },
+          "drafted_by": {
+            "type": "string",
+            "title": "Drafted By",
+            "default": "llm"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "reviewer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer"
+          },
+          "lexical_overlap_run": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lexical Overlap Run"
+          },
+          "lexical_overlap_jaccard": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lexical Overlap Jaccard"
+          },
+          "flagged_too_easy": {
+            "type": "boolean",
+            "title": "Flagged Too Easy",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "doc_id",
+          "section",
+          "evidence",
+          "reference_answer",
+          "type",
+          "difficulty"
+        ],
+        "title": "QuestionSchema"
+      },
+      "QuestionStatsResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "verified": {
+            "type": "integer",
+            "title": "Verified"
+          },
+          "unverified": {
+            "type": "integer",
+            "title": "Unverified"
+          },
+          "by_doc": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Doc"
+          },
+          "by_type": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Type"
+          },
+          "by_difficulty": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Difficulty"
+          },
+          "flagged_too_easy_count": {
+            "type": "integer",
+            "title": "Flagged Too Easy Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "verified",
+          "unverified",
+          "by_doc",
+          "by_type",
+          "by_difficulty",
+          "flagged_too_easy_count"
+        ],
+        "title": "QuestionStatsResponse"
+      },
+      "QuestionUpdateSchema": {
+        "properties": {
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "reference_answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Answer"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "factual",
+                  "definition",
+                  "procedural",
+                  "multi-hop"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "easy",
+                  "medium",
+                  "hard"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          },
+          "verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "reviewer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewer"
+          }
+        },
+        "type": "object",
+        "title": "QuestionUpdateSchema"
+      },
+      "ResultPerQueryItem": {
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "title": "Question Id"
+          },
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "config": {
+            "type": "string",
+            "title": "Config"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "hit_at_k": {
+            "type": "number",
+            "title": "Hit At K"
+          },
+          "reciprocal_rank": {
+            "type": "number",
+            "title": "Reciprocal Rank"
+          },
+          "precision_at_k": {
+            "type": "number",
+            "title": "Precision At K"
+          },
+          "recall_at_k": {
+            "type": "number",
+            "title": "Recall At K"
+          },
+          "context_precision": {
+            "type": "number",
+            "title": "Context Precision"
+          },
+          "context_recall": {
+            "type": "number",
+            "title": "Context Recall"
+          },
+          "all_evidence_hit": {
+            "type": "boolean",
+            "title": "All Evidence Hit"
+          },
+          "retrieved_chunk_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Retrieved Chunk Ids"
+          },
+          "retrieved_scores": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Retrieved Scores"
+          },
+          "latency_ms": {
+            "type": "number",
+            "title": "Latency Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_id",
+          "doc_id",
+          "config",
+          "model",
+          "hit_at_k",
+          "reciprocal_rank",
+          "precision_at_k",
+          "recall_at_k",
+          "context_precision",
+          "context_recall",
+          "all_evidence_hit",
+          "latency_ms"
+        ],
+        "title": "ResultPerQueryItem"
+      },
+      "ResultSummaryItem": {
+        "properties": {
+          "config": {
+            "type": "string",
+            "title": "Config"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "hit_at_k": {
+            "type": "number",
+            "title": "Hit At K"
+          },
+          "hit_ci_lower": {
+            "type": "number",
+            "title": "Hit Ci Lower"
+          },
+          "hit_ci_upper": {
+            "type": "number",
+            "title": "Hit Ci Upper"
+          },
+          "mrr": {
+            "type": "number",
+            "title": "Mrr"
+          },
+          "mrr_ci_lower": {
+            "type": "number",
+            "title": "Mrr Ci Lower"
+          },
+          "mrr_ci_upper": {
+            "type": "number",
+            "title": "Mrr Ci Upper"
+          },
+          "precision_at_k": {
+            "type": "number",
+            "title": "Precision At K"
+          },
+          "precision_ci_lower": {
+            "type": "number",
+            "title": "Precision Ci Lower"
+          },
+          "precision_ci_upper": {
+            "type": "number",
+            "title": "Precision Ci Upper"
+          },
+          "recall_at_k": {
+            "type": "number",
+            "title": "Recall At K"
+          },
+          "recall_ci_lower": {
+            "type": "number",
+            "title": "Recall Ci Lower"
+          },
+          "recall_ci_upper": {
+            "type": "number",
+            "title": "Recall Ci Upper"
+          },
+          "context_precision": {
+            "type": "number",
+            "title": "Context Precision"
+          },
+          "context_precision_ci_lower": {
+            "type": "number",
+            "title": "Context Precision Ci Lower"
+          },
+          "context_precision_ci_upper": {
+            "type": "number",
+            "title": "Context Precision Ci Upper"
+          },
+          "context_recall": {
+            "type": "number",
+            "title": "Context Recall"
+          },
+          "context_recall_ci_lower": {
+            "type": "number",
+            "title": "Context Recall Ci Lower"
+          },
+          "context_recall_ci_upper": {
+            "type": "number",
+            "title": "Context Recall Ci Upper"
+          },
+          "truncation_rate": {
+            "type": "number",
+            "title": "Truncation Rate"
+          },
+          "mean_latency_ms": {
+            "type": "number",
+            "title": "Mean Latency Ms"
+          },
+          "chunk_count": {
+            "type": "integer",
+            "title": "Chunk Count"
+          },
+          "avg_tokens": {
+            "type": "number",
+            "title": "Avg Tokens"
+          },
+          "index_size_mb": {
+            "type": "number",
+            "title": "Index Size Mb"
+          },
+          "groundedness_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groundedness Score"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          }
+        },
+        "type": "object",
+        "required": [
+          "config",
+          "model",
+          "hit_at_k",
+          "hit_ci_lower",
+          "hit_ci_upper",
+          "mrr",
+          "mrr_ci_lower",
+          "mrr_ci_upper",
+          "precision_at_k",
+          "precision_ci_lower",
+          "precision_ci_upper",
+          "recall_at_k",
+          "recall_ci_lower",
+          "recall_ci_upper",
+          "context_precision",
+          "context_precision_ci_lower",
+          "context_precision_ci_upper",
+          "context_recall",
+          "context_recall_ci_lower",
+          "context_recall_ci_upper",
+          "truncation_rate",
+          "mean_latency_ms",
+          "chunk_count",
+          "avg_tokens",
+          "index_size_mb"
+        ],
+        "title": "ResultSummaryItem"
+      },
+      "ResultSummaryResponse": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "has_unverified": {
+            "type": "boolean",
+            "title": "Has Unverified"
+          },
+          "notice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ResultSummaryItem"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "has_unverified",
+          "rows"
+        ],
+        "title": "ResultSummaryResponse"
+      },
+      "RetrievedChunkDetail": {
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "title": "Rank"
+          },
+          "chunk_id": {
+            "type": "string",
+            "title": "Chunk Id"
+          },
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Section"
+          },
+          "token_count": {
+            "type": "integer",
+            "title": "Token Count"
+          },
+          "char_start": {
+            "type": "integer",
+            "title": "Char Start"
+          },
+          "char_end": {
+            "type": "integer",
+            "title": "Char End"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "truncated": {
+            "type": "boolean",
+            "title": "Truncated"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rank",
+          "chunk_id",
+          "doc_id",
+          "score",
+          "section",
+          "token_count",
+          "char_start",
+          "char_end",
+          "text",
+          "truncated"
+        ],
+        "title": "RetrievedChunkDetail"
+      },
+      "ReviewProgressResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "verified": {
+            "type": "integer",
+            "title": "Verified"
+          },
+          "unverified": {
+            "type": "integer",
+            "title": "Unverified"
+          },
+          "percent_verified": {
+            "type": "number",
+            "title": "Percent Verified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "verified",
+          "unverified",
+          "percent_verified"
+        ],
+        "title": "ReviewProgressResponse"
+      },
+      "SearchMatchItem": {
+        "properties": {
+          "doc_id": {
+            "type": "string",
+            "title": "Doc Id"
+          },
+          "char_start": {
+            "type": "integer",
+            "title": "Char Start"
+          },
+          "char_end": {
+            "type": "integer",
+            "title": "Char End"
+          },
+          "snippet": {
+            "type": "string",
+            "title": "Snippet"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Section"
+          }
+        },
+        "type": "object",
+        "required": [
+          "doc_id",
+          "char_start",
+          "char_end",
+          "snippet"
+        ],
+        "title": "SearchMatchItem"
+      },
+      "SectionOutlineItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "number": {
+            "type": "string",
+            "title": "Number"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level"
+          },
+          "char_start": {
+            "type": "integer",
+            "title": "Char Start"
+          },
+          "char_end": {
+            "type": "integer",
+            "title": "Char End"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "number",
+          "title",
+          "level",
+          "char_start",
+          "char_end",
+          "label"
+        ],
+        "title": "SectionOutlineItem"
+      },
+      "SettingsSchema": {
+        "properties": {
+          "llm_judge_provider": {
+            "type": "string",
+            "title": "Llm Judge Provider",
+            "default": "mock"
+          },
+          "llm_judge_model": {
+            "type": "string",
+            "title": "Llm Judge Model",
+            "default": "mock-judge"
+          },
+          "openai_api_key_masked": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openai Api Key Masked"
+          },
+          "gemini_api_key_masked": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gemini Api Key Masked"
+          },
+          "ollama_base_url": {
+            "type": "string",
+            "title": "Ollama Base Url",
+            "default": "http://localhost:11434"
+          }
+        },
+        "type": "object",
+        "title": "SettingsSchema"
+      },
+      "SettingsUpdateSchema": {
+        "properties": {
+          "llm_judge_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Judge Provider"
+          },
+          "llm_judge_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Judge Model"
+          },
+          "openai_api_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openai Api Key"
+          },
+          "gemini_api_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gemini Api Key"
+          },
+          "ollama_base_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ollama Base Url"
+          }
+        },
+        "type": "object",
+        "title": "SettingsUpdateSchema"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "ValidationIssueSchema": {
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "title": "Question Id"
+          },
+          "issue_type": {
+            "type": "string",
+            "title": "Issue Type"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_id",
+          "issue_type",
+          "message"
+        ],
+        "title": "ValidationIssueSchema"
+      },
+      "ValidationResponse": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "total_questions": {
+            "type": "integer",
+            "title": "Total Questions"
+          },
+          "issue_count": {
+            "type": "integer",
+            "title": "Issue Count"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationIssueSchema"
+            },
+            "type": "array",
+            "title": "Issues"
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "total_questions",
+          "issue_count",
+          "issues"
+        ],
+        "title": "ValidationResponse"
+      }
+    }
+  }
+}

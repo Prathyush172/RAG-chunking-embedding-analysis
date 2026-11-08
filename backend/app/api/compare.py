@@ -72,7 +72,8 @@ def compare_runs(payload: CompareRequest, db: Session = Depends(get_db)) -> Comp
         t_mean = float(np.mean(t_vals))
         delta_mean, ci_lo, ci_hi = compute_bootstrap_ci(deltas.tolist())
 
-        p_val = compute_wilcoxon_paired(b_vals, t_vals)
+        p_res = compute_wilcoxon_paired(b_vals, t_vals)
+        p_val = p_res.p_value if hasattr(p_res, "p_value") else float(p_res)
         sig = bool(p_val < 0.05)
 
         metric_items.append(

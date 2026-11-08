@@ -16,7 +16,8 @@ def get_corpus_meta() -> dict:
     if not corpus_yaml.exists():
         return {}
     with open(corpus_yaml, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f).get("documents", {})
+        data = yaml.safe_load(f) or {}
+        return data.get("corpus", {}) or data.get("documents", {})
 
 
 @router.get("/documents", response_model=list[DocumentSummary])

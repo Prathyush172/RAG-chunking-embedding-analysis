@@ -218,6 +218,15 @@ class FaissIndexManager:
             is_cache_hit=False,
         )
 
+    def list_cached_configs(self) -> list[str]:
+        """List cache keys for all cached index directories."""
+        keys = []
+        if self.artifacts_dir.exists():
+            for child in self.artifacts_dir.iterdir():
+                if child.is_dir() and (child / "meta.json").exists():
+                    keys.append(child.name)
+        return keys
+
     def clear_cache(self) -> int:
         """Remove all cached artifacts. Returns count of deleted directories."""
         count = 0

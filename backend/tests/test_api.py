@@ -1,3 +1,4 @@
+import torch  # Must be first on Windows to initialize OpenMP before faiss
 import io
 import json
 import pytest
