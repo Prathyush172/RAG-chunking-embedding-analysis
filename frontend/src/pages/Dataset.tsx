@@ -605,7 +605,11 @@ export const Dataset: React.FC = () => {
                       </label>
                       <select
                         value={newType}
-                        onChange={(e) => setNewType(e.target.value as any)}
+                        onChange={(e) =>
+                          setNewType(
+                            e.target.value as "factual" | "definition" | "procedural" | "multi-hop"
+                          )
+                        }
                         className="w-full text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2"
                       >
                         <option value="factual">Factual</option>
@@ -621,7 +625,9 @@ export const Dataset: React.FC = () => {
                       </label>
                       <select
                         value={newDifficulty}
-                        onChange={(e) => setNewDifficulty(e.target.value as any)}
+                        onChange={(e) =>
+                          setNewDifficulty(e.target.value as "easy" | "medium" | "hard")
+                        }
                         className="w-full text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2"
                       >
                         <option value="easy">Easy</option>

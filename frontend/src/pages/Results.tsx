@@ -5,12 +5,6 @@ import {
   BarChart2,
   Download,
   AlertTriangle,
-  HelpCircle,
-  TrendingUp,
-  Sliders,
-  Sparkles,
-  ArrowUpDown,
-  Search,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -20,27 +14,25 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip as RechartsTooltip,
-  Line,
   BarChart,
   Bar,
   Legend,
-  LineChart,
 } from "recharts";
-import { api, LeaderboardRow, HeatmapData, ParetoPoint } from "../lib/api";
+import { api, ResultSummaryItem, ParetoPoint } from "../lib/api";
 import { useExperiment } from "../context/ExperimentContext";
 import { MetricTooltip } from "../components/common/MetricTooltip";
 
 export const Results: React.FC = () => {
-  const { activeExperiment, experiments, setActiveExperimentId } = useExperiment();
+  const { activeExperiment } = useExperiment();
 
   const [activeTab, setActiveTab] = useState<"leaderboard" | "heatmap" | "charts" | "pareto" | "drilldown">("leaderboard");
   const [heatmapMetric, setHeatmapMetric] = useState<string>("hit_rate");
   const [selectedDrilldownQid, setSelectedDrilldownQid] = useState<string>("tcp-01");
-  const [sortField, setSortField] = useState<keyof LeaderboardRow>("hit_rate");
+  const [sortField, setSortField] = useState<keyof ResultSummaryItem>("hit_at_k");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   // Leaderboard Query
-  const { data: leaderboardData, isLoading: isLoadingLeaderboard } = useQuery({
+  const { data: leaderboardData } = useQuery({
     queryKey: ["leaderboard", activeExperiment?.id],
     queryFn: () => (activeExperiment?.id ? api.getLeaderboard(activeExperiment.id) : null),
     enabled: !!activeExperiment && activeExperiment.status === "completed",
@@ -93,8 +85,8 @@ export const Results: React.FC = () => {
   }
 
   const rows = [...(leaderboardData?.rows || [])];
-  const floorRow = rows.find((r) => r.is_random_baseline);
-  const benchmarkRows = rows.filter((r) => !r.is_random_baseline);
+  const floorRow = rows.find((r) => r.config === "random_baseline");
+  const benchmarkRows = rows.filter((r) => r.config !== "random_baseline");
 
   // Sorting
   benchmarkRows.sort((a, b) => {
@@ -103,7 +95,7 @@ export const Results: React.FC = () => {
     return sortDir === "desc" ? valB - valA : valA - valB;
   });
 
-  const handleSort = (field: keyof LeaderboardRow) => {
+  const handleSort = (field: keyof ResultSummaryItem) => {
     if (sortField === field) {
       setSortDir(sortDir === "desc" ? "asc" : "desc");
     } else {
@@ -115,17 +107,17 @@ export const Results: React.FC = () => {
   // Truncation check
   const hasTruncation = benchmarkRows.some((r) => r.truncation_rate > 0);
 
-  // Chart data preparation for grouped bar chart
+  // Grouped bar chart data
   const modelBarData = ["minilm", "bge_small", "e5_small"].map((m) => {
-    const mRows = benchmarkRows.filter((r) => r.model_id === m);
-    const avgHit = mRows.length > 0 ? mRows.reduce((a, b) => a + b.hit_rate, 0) / mRows.length : 0;
+    const mRows = benchmarkRows.filter((r) => r.model === m);
+    const avgHit = mRows.length > 0 ? mRows.reduce((a, b) => a + b.hit_at_k, 0) / mRows.length : 0;
     const avgMrr = mRows.length > 0 ? mRows.reduce((a, b) => a + b.mrr, 0) / mRows.length : 0;
-    const avgLatency = mRows.length > 0 ? mRows.reduce((a, b) => a + b.latency_p50_ms, 0) / mRows.length : 0;
+    const avgLatency = mRows.length > 0 ? mRows.reduce((a, b) => a + b.mean_latency_ms, 0) / mRows.length : 0;
     return {
       model: m,
-      hit_rate: Number((avgHit * 100).toFixed(1)),
+      hit_at_k: Number((avgHit * 100).toFixed(1)),
       mrr: Number((avgMrr * 100).toFixed(1)),
-      latency_p50_ms: Number(avgLatency.toFixed(1)),
+      mean_latency_ms: Number(avgLatency.toFixed(1)),
     };
   });
 
@@ -213,8 +205,7 @@ export const Results: React.FC = () => {
           <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <div>
             <span className="font-bold">Passage Truncation Detected:</span> Some chunking configurations
-            (such as 512-token chunks on 256-limit models) generated passages longer than the embedding
-            model's maximum sequence length. Look for the yellow truncation flag in the leaderboard table.
+            generated passages longer than the embedding model's maximum context length.
           </div>
         </div>
       )}
@@ -224,7 +215,7 @@ export const Results: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
           <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <span className="text-xs text-slate-500">
-              Sorted by <strong className="text-slate-800 dark:text-slate-200">{sortField}</strong> ({sortDir}) — Hover metric values to inspect bootstrap 95% CI
+              Sorted by <strong className="text-slate-800 dark:text-slate-200">{String(sortField)}</strong> ({sortDir}) — Hover metric values to inspect bootstrap 95% CI
             </span>
             <a
               href={api.exportCsvUrl(activeExperiment.id)}
@@ -245,7 +236,7 @@ export const Results: React.FC = () => {
                   <th className="px-4 py-3">Embedding Model</th>
                   <th
                     className="px-4 py-3 cursor-pointer hover:text-indigo-600"
-                    onClick={() => handleSort("hit_rate")}
+                    onClick={() => handleSort("hit_at_k")}
                   >
                     <MetricTooltip metricKey="hit_rate">
                       <span className="inline-flex items-center gap-1">Hit@5</span>
@@ -293,10 +284,10 @@ export const Results: React.FC = () => {
                   </th>
                   <th
                     className="px-4 py-3 cursor-pointer hover:text-indigo-600"
-                    onClick={() => handleSort("latency_p50_ms")}
+                    onClick={() => handleSort("mean_latency_ms")}
                   >
                     <MetricTooltip metricKey="latency">
-                      <span className="inline-flex items-center gap-1">Latency p50</span>
+                      <span className="inline-flex items-center gap-1">Latency Mean</span>
                     </MetricTooltip>
                   </th>
                   <th className="px-4 py-3">Truncation</th>
@@ -307,20 +298,20 @@ export const Results: React.FC = () => {
                   <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                     <td className="px-4 py-3 font-mono font-bold text-slate-400">#{i + 1}</td>
                     <td className="px-4 py-3 font-mono font-medium text-slate-900 dark:text-slate-100">
-                      {r.config_label}
+                      {r.config}
                     </td>
                     <td className="px-4 py-3 font-mono text-indigo-600 dark:text-indigo-400">
-                      {r.model_id}
+                      {r.model}
                     </td>
                     <td
                       className="px-4 py-3 font-mono font-bold text-emerald-600 dark:text-emerald-400 cursor-help"
-                      title={r.hit_rate_ci ? `95% CI: [${r.hit_rate_ci[0].toFixed(3)}, ${r.hit_rate_ci[1].toFixed(3)}]` : undefined}
+                      title={`95% CI: [${r.hit_ci_lower.toFixed(3)}, ${r.hit_ci_upper.toFixed(3)}]`}
                     >
-                      {(r.hit_rate * 100).toFixed(1)}%
+                      {(r.hit_at_k * 100).toFixed(1)}%
                     </td>
                     <td
                       className="px-4 py-3 font-mono cursor-help"
-                      title={r.mrr_ci ? `95% CI: [${r.mrr_ci[0].toFixed(3)}, ${r.mrr_ci[1].toFixed(3)}]` : undefined}
+                      title={`95% CI: [${r.mrr_ci_lower.toFixed(3)}, ${r.mrr_ci_upper.toFixed(3)}]`}
                     >
                       {r.mrr.toFixed(3)}
                     </td>
@@ -328,7 +319,7 @@ export const Results: React.FC = () => {
                     <td className="px-4 py-3 font-mono">{(r.recall_at_k * 100).toFixed(1)}%</td>
                     <td className="px-4 py-3 font-mono">{(r.context_precision * 100).toFixed(1)}%</td>
                     <td className="px-4 py-3 font-mono">{(r.context_recall * 100).toFixed(1)}%</td>
-                    <td className="px-4 py-3 font-mono">{r.latency_p50_ms.toFixed(1)} ms</td>
+                    <td className="px-4 py-3 font-mono">{r.mean_latency_ms.toFixed(1)} ms</td>
                     <td className="px-4 py-3 font-mono">
                       {r.truncation_rate > 0 ? (
                         <span className="text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1">
@@ -352,9 +343,9 @@ export const Results: React.FC = () => {
                     <td className="px-4 py-3 font-mono text-slate-500">None</td>
                     <td
                       className="px-4 py-3 font-mono text-slate-600 dark:text-slate-400 cursor-help"
-                      title={floorRow.hit_rate_ci ? `95% CI: [${floorRow.hit_rate_ci[0].toFixed(3)}, ${floorRow.hit_rate_ci[1].toFixed(3)}]` : undefined}
+                      title={`95% CI: [${floorRow.hit_ci_lower.toFixed(3)}, ${floorRow.hit_ci_upper.toFixed(3)}]`}
                     >
-                      {(floorRow.hit_rate * 100).toFixed(1)}%
+                      {(floorRow.hit_at_k * 100).toFixed(1)}%
                     </td>
                     <td className="px-4 py-3 font-mono text-slate-600 dark:text-slate-400">
                       {floorRow.mrr.toFixed(3)}
@@ -402,7 +393,7 @@ export const Results: React.FC = () => {
                 <option value="mrr">MRR</option>
                 <option value="precision_at_k">Precision@5</option>
                 <option value="recall_at_k">Recall@5</option>
-                <option value="latency_p50_ms">Latency p50</option>
+                <option value="latency_p50_ms">Latency</option>
               </select>
             </div>
           </div>
@@ -415,7 +406,7 @@ export const Results: React.FC = () => {
                   <th className="p-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-left">
                     Strategy / Config
                   </th>
-                  {heatmapData.models.map((m) => (
+                  {heatmapData.models.map((m: string) => (
                     <th
                       key={m}
                       className="p-3 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-center font-bold text-indigo-600 dark:text-indigo-400"
@@ -426,13 +417,13 @@ export const Results: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {heatmapData.configs.map((cfg) => (
+                {heatmapData.strategies.map((cfg: string) => (
                   <tr key={cfg}>
                     <td className="p-2.5 border border-slate-200 dark:border-slate-800 font-medium text-slate-800 dark:text-slate-200 bg-slate-50/50 dark:bg-slate-900">
                       {cfg}
                     </td>
-                    {heatmapData.models.map((m) => {
-                      const val = heatmapData.matrix[cfg]?.[m];
+                    {heatmapData.models.map((m: string) => {
+                      const val = (heatmapData.matrix as Record<string, Record<string, number>>)[cfg]?.[m];
                       const isHigh = val !== undefined && val > 0.6;
                       return (
                         <td
@@ -445,7 +436,7 @@ export const Results: React.FC = () => {
                               : "bg-amber-500/10 text-amber-800 dark:text-amber-300"
                           }`}
                         >
-                          {val !== undefined ? (heatmapMetric.includes("ms") ? `${val.toFixed(1)}ms` : val.toFixed(3)) : "-"}
+                          {val !== undefined ? (heatmapMetric.includes("ms") || heatmapMetric.includes("latency") ? `${val.toFixed(1)}ms` : val.toFixed(3)) : "-"}
                         </td>
                       );
                     })}
@@ -477,7 +468,7 @@ export const Results: React.FC = () => {
                   <YAxis tick={{ fontSize: 11 }} domain={[0, 100]} />
                   <RechartsTooltip />
                   <Legend />
-                  <Bar dataKey="hit_rate" fill="#10b981" name="Hit@5 (%)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="hit_at_k" fill="#10b981" name="Hit@5 (%)" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="mrr" fill="#6366f1" name="MRR (&times;100)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -504,14 +495,14 @@ export const Results: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                 <XAxis
                   type="number"
-                  dataKey="latency_p50_ms"
-                  name="Latency p50 (ms)"
+                  dataKey="mean_latency_ms"
+                  name="Mean Latency (ms)"
                   tick={{ fontSize: 11 }}
                   unit="ms"
                 />
                 <YAxis
                   type="number"
-                  dataKey="hit_rate"
+                  dataKey="hit_at_k"
                   name="Hit@5"
                   tick={{ fontSize: 11 }}
                   domain={[0, 1]}
@@ -524,11 +515,8 @@ export const Results: React.FC = () => {
                       return (
                         <div className="bg-slate-900 text-white p-2.5 rounded-lg text-xs shadow-xl font-mono">
                           <div className="font-bold text-indigo-300">{data.config} + {data.model}</div>
-                          <div>Hit@5: {(data.hit_rate * 100).toFixed(1)}%</div>
-                          <div>Latency: {data.latency_p50_ms.toFixed(1)} ms</div>
-                          {data.is_pareto_optimal && (
-                            <div className="text-emerald-400 font-bold mt-1">★ Pareto Optimal</div>
-                          )}
+                          <div>Hit@5: {(data.hit_at_k * 100).toFixed(1)}%</div>
+                          <div>Latency: {data.mean_latency_ms.toFixed(1)} ms</div>
                         </div>
                       );
                     }
@@ -536,15 +524,9 @@ export const Results: React.FC = () => {
                   }}
                 />
                 <Scatter
-                  name="All Runs"
-                  data={paretoData.points}
-                  fill="#94a3b8"
-                />
-                <Scatter
-                  name="Pareto Optimal Frontier"
-                  data={paretoData.frontier_points}
+                  name="Configurations"
+                  data={paretoData}
                   fill="#10b981"
-                  shape="star"
                 />
               </ScatterChart>
             </ResponsiveContainer>
@@ -585,34 +567,40 @@ export const Results: React.FC = () => {
                 <div className="font-semibold text-slate-800 dark:text-slate-200">
                   {drilldownData.question}
                 </div>
-                <div className="text-slate-500 mt-1 font-mono text-[11px]">
-                  Gold Evidence: "{drilldownData.gold_evidence[0]?.quote}"
-                </div>
+                {drilldownData.gold_evidence && drilldownData.gold_evidence[0] && (
+                  <div className="text-slate-500 mt-1 font-mono text-[11px]">
+                    Gold Evidence: "{drilldownData.gold_evidence[0].quote}"
+                  </div>
+                )}
               </div>
 
               {/* Per-Config Rank Breakdown */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {drilldownData.configurations.map((cfg, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-3 rounded-lg border text-xs ${
-                      cfg.is_hit
-                        ? "border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/30"
-                        : "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30"
-                    }`}
-                  >
-                    <div className="font-mono font-bold text-slate-900 dark:text-white">
-                      {cfg.config_label} + {cfg.model_id}
+              {drilldownData.configurations && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {drilldownData.configurations.map((cfg: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-lg border text-xs ${
+                        cfg.is_hit
+                          ? "border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/30"
+                          : "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30"
+                      }`}
+                    >
+                      <div className="font-mono font-bold text-slate-900 dark:text-white">
+                        {cfg.config_label || cfg.config} + {cfg.model_id || cfg.model}
+                      </div>
+                      <div className="mt-1 flex justify-between font-mono text-[11px]">
+                        <span>First Relevant Rank:</span>
+                        <span className={cfg.is_hit ? "text-emerald-600 font-bold" : "text-rose-500"}>
+                          {cfg.first_relevant_rank !== null && cfg.first_relevant_rank !== undefined
+                            ? `#${cfg.first_relevant_rank}`
+                            : "Miss"}
+                        </span>
+                      </div>
                     </div>
-                    <div className="mt-1 flex justify-between font-mono text-[11px]">
-                      <span>First Relevant Rank:</span>
-                      <span className={cfg.is_hit ? "text-emerald-600 font-bold" : "text-rose-500"}>
-                        {cfg.first_relevant_rank !== null ? `#${cfg.first_relevant_rank}` : "Miss"}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

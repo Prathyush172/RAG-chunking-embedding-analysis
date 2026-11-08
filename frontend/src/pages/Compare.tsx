@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GitCompare, ArrowRight, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
-import { api, CompareRequest, LeaderboardRow } from "../lib/api";
+import { GitCompare, CheckCircle } from "lucide-react";
+import { api, CompareRequest } from "../lib/api";
 import { useExperiment } from "../context/ExperimentContext";
 import { MetricTooltip } from "../components/common/MetricTooltip";
 
@@ -22,10 +22,10 @@ export const Compare: React.FC = () => {
   });
 
   const availableConfigs = Array.from(
-    new Set(leaderboardData?.rows.filter((r) => !r.is_random_baseline).map((r) => r.config_label) || [])
+    new Set(leaderboardData?.rows.filter((r) => r.config !== "random_baseline").map((r) => r.config) || [])
   );
   const availableModels = Array.from(
-    new Set(leaderboardData?.rows.filter((r) => !r.is_random_baseline).map((r) => r.model_id) || [])
+    new Set(leaderboardData?.rows.filter((r) => r.config !== "random_baseline").map((r) => r.model) || [])
   );
 
   const compareReq: CompareRequest = {
@@ -36,7 +36,7 @@ export const Compare: React.FC = () => {
     target_model: targetModel,
   };
 
-  const { data: compareData, isLoading } = useQuery({
+  const { data: compareData } = useQuery({
     queryKey: ["compare", compareReq],
     queryFn: () => (activeExperiment?.id ? api.compareRuns(compareReq) : null),
     enabled: !!activeExperiment && activeExperiment.status === "completed",
@@ -221,18 +221,18 @@ export const Compare: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
               {compareData?.metrics.map((m, idx) => {
-                const isSig = m.p_value < 0.05;
+                const isSig = m.statistically_significant;
                 const isPositive = m.delta > 0;
                 return (
                   <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                     <td className="px-6 py-3 font-sans font-medium text-slate-900 dark:text-slate-100">
-                      <MetricTooltip metricKey={m.metric_name}>
-                        <span>{m.metric_name}</span>
+                      <MetricTooltip metricKey={m.metric}>
+                        <span>{m.metric}</span>
                       </MetricTooltip>
                     </td>
-                    <td className="px-6 py-3">{m.base_value.toFixed(3)}</td>
+                    <td className="px-6 py-3">{m.base_mean.toFixed(3)}</td>
                     <td className="px-6 py-3 font-bold text-slate-900 dark:text-slate-100">
-                      {m.target_value.toFixed(3)}
+                      {m.target_mean.toFixed(3)}
                     </td>
                     <td
                       className={`px-6 py-3 font-bold ${
@@ -246,7 +246,7 @@ export const Compare: React.FC = () => {
                       {isPositive ? `+${m.delta.toFixed(3)}` : m.delta.toFixed(3)}
                     </td>
                     <td className="px-6 py-3 text-slate-500">
-                      [{m.ci_lower.toFixed(3)}, {m.ci_upper.toFixed(3)}]
+                      [{m.delta_ci_lower.toFixed(3)}, {m.delta_ci_upper.toFixed(3)}]
                     </td>
                     <td className="px-6 py-3">p = {m.p_value.toFixed(4)}</td>
                     <td className="px-6 py-3 font-sans">

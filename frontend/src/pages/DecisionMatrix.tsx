@@ -1,16 +1,6 @@
 import React, { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  Sliders,
-  Sparkles,
-  Award,
-  Layers,
-  HelpCircle,
-  TrendingUp,
-  Cpu,
-  Clock,
-  HardDrive,
-} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Award } from "lucide-react";
 import {
   Radar,
   RadarChart,
@@ -21,7 +11,7 @@ import {
   Legend,
   Tooltip as RechartsTooltip,
 } from "recharts";
-import { api, DecisionMatrixWeights, DecisionMatrixResponse } from "../lib/api";
+import { api, DecisionMatrixWeights, DecisionMatrixRankItem } from "../lib/api";
 import { useExperiment } from "../context/ExperimentContext";
 
 export const DecisionMatrix: React.FC = () => {
@@ -43,7 +33,7 @@ export const DecisionMatrix: React.FC = () => {
   });
 
   // Compute Mutation
-  const { data: matrixData, isLoading } = useQuery({
+  const { data: matrixData } = useQuery({
     queryKey: ["decision-matrix", activeExperiment?.id, weights],
     queryFn: () => (activeExperiment?.id ? api.computeDecisionMatrix(weights, activeExperiment.id) : null),
     enabled: !!activeExperiment && activeExperiment.status === "completed",
@@ -59,7 +49,7 @@ export const DecisionMatrix: React.FC = () => {
     setWeights({ ...weights, [field]: val });
   };
 
-  const ranked = matrixData?.ranked_results || [];
+  const ranked: DecisionMatrixRankItem[] = matrixData?.ranked_results || [];
   const top3 = ranked.slice(0, 3);
 
   // Radar chart data for top 3
@@ -74,8 +64,8 @@ export const DecisionMatrix: React.FC = () => {
   const radarData = radarDimensions.map((dim) => {
     const entry: Record<string, string | number> = { dimension: dim.label };
     top3.forEach((c, idx) => {
-      const breakdown = c.breakdown as Record<string, number>;
-      entry[`Rank #${idx + 1}`] = Number((breakdown[dim.key] * 100 || 0).toFixed(1));
+      const breakdown = (c.subscores || {}) as Record<string, number>;
+      entry[`Rank #${idx + 1}`] = Number(((breakdown[dim.key] ?? 0) * 100).toFixed(1));
     });
     return entry;
   });
@@ -246,19 +236,23 @@ export const DecisionMatrix: React.FC = () => {
                       )}
                     </td>
                     <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100">
-                      {item.config_label}
+                      {item.config}
                     </td>
                     <td className="px-4 py-3 text-indigo-600 dark:text-indigo-400">
-                      {item.model_id}
+                      {item.model}
                     </td>
                     <td className="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400">
-                      {item.score.toFixed(3)}
+                      {item.total_utility_score.toFixed(3)}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {(item.raw_metrics.hit_rate * 100).toFixed(1)}%
+                      {item.raw_metrics && item.raw_metrics.hit_at_k !== undefined
+                        ? `${(item.raw_metrics.hit_at_k * 100).toFixed(1)}%`
+                        : "-"}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {item.raw_metrics.latency_p50_ms.toFixed(1)} ms
+                      {item.raw_metrics && item.raw_metrics.mean_latency_ms !== undefined
+                        ? `${item.raw_metrics.mean_latency_ms.toFixed(1)} ms`
+                        : "-"}
                     </td>
                   </tr>
                 ))}
@@ -286,7 +280,7 @@ export const DecisionMatrix: React.FC = () => {
                   <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 10 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9 }} />
                   <Radar
-                    name={`#1: ${top3[0]?.config_label}`}
+                    name={`#1: ${top3[0]?.config}`}
                     dataKey="Rank #1"
                     stroke="#10b981"
                     fill="#10b981"
@@ -294,7 +288,7 @@ export const DecisionMatrix: React.FC = () => {
                   />
                   {top3[1] && (
                     <Radar
-                      name={`#2: ${top3[1]?.config_label}`}
+                      name={`#2: ${top3[1]?.config}`}
                       dataKey="Rank #2"
                       stroke="#6366f1"
                       fill="#6366f1"
@@ -303,7 +297,7 @@ export const DecisionMatrix: React.FC = () => {
                   )}
                   {top3[2] && (
                     <Radar
-                      name={`#3: ${top3[2]?.config_label}`}
+                      name={`#3: ${top3[2]?.config}`}
                       dataKey="Rank #3"
                       stroke="#f59e0b"
                       fill="#f59e0b"

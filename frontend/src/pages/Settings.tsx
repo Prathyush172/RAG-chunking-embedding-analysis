@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Settings as SettingsIcon,
   Save,
   Trash2,
   Key,
@@ -10,7 +9,7 @@ import {
   Database,
   CheckCircle,
 } from "lucide-react";
-import { api, SettingsSchema } from "../lib/api";
+import { api, SettingsUpdateSchema } from "../lib/api";
 
 export const Settings: React.FC = () => {
   const queryClient = useQueryClient();
@@ -33,14 +32,14 @@ export const Settings: React.FC = () => {
 
   useEffect(() => {
     if (settingsData) {
-      setProvider(settingsData.llm_judge_provider);
-      setModel(settingsData.llm_judge_model);
-      setApiKeyInput(""); // API key is masked as ******** by default
+      setProvider(settingsData.llm_judge_provider || "openai");
+      setModel(settingsData.llm_judge_model || "gpt-4o-mini");
+      setApiKeyInput("");
     }
   }, [settingsData]);
 
   const updateMutation = useMutation({
-    mutationFn: (data: SettingsSchema) => api.updateSettings(data),
+    mutationFn: (data: SettingsUpdateSchema) => api.updateSettings(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["settings"] });
       setSaveSuccess(true);
@@ -61,12 +60,26 @@ export const Settings: React.FC = () => {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate({
+    const updatePayload: SettingsUpdateSchema = {
       llm_judge_provider: provider,
       llm_judge_model: model,
-      llm_judge_api_key: apiKeyInput ? apiKeyInput.trim() : undefined,
-    });
+    };
+    if (apiKeyInput.trim()) {
+      if (provider === "openai") {
+        updatePayload.openai_api_key = apiKeyInput.trim();
+      } else if (provider === "gemini") {
+        updatePayload.gemini_api_key = apiKeyInput.trim();
+      }
+    }
+    updateMutation.mutate(updatePayload);
   };
+
+  const currentMaskedKey =
+    provider === "openai"
+      ? settingsData?.openai_api_key_masked
+      : provider === "gemini"
+      ? settingsData?.gemini_api_key_masked
+      : null;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -135,7 +148,7 @@ export const Settings: React.FC = () => {
             type="password"
             value={apiKeyInput}
             onChange={(e) => setApiKeyInput(e.target.value)}
-            placeholder={settingsData?.llm_judge_api_key || "Leave blank to keep existing key"}
+            placeholder={currentMaskedKey || "Enter API key to update..."}
             className="w-full text-xs font-mono bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-slate-900 dark:text-slate-100"
           />
           <p className="text-[11px] text-slate-400 mt-1">

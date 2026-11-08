@@ -1,22 +1,17 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
-  Compass,
   Search,
   Plus,
   Trash2,
-  Sparkles,
-  Layers,
-  CheckCircle,
-  AlertTriangle,
-  Clock,
   Loader2,
 } from "lucide-react";
 import {
   api,
-  PlaygroundQueryRequest,
-  MultiPlaygroundResponse,
-  SinglePlaygroundResponse,
+  PlaygroundRequest,
+  PlaygroundResponse,
+  PlaygroundConfigResult,
+  RetrievedChunkDetail,
 } from "../lib/api";
 
 const SAMPLE_QUERIES = [
@@ -60,7 +55,7 @@ export const Playground: React.FC = () => {
 
   // Mutation
   const queryMutation = useMutation({
-    mutationFn: (req: PlaygroundQueryRequest) => api.queryPlayground(req),
+    mutationFn: (req: PlaygroundRequest) => api.queryPlayground(req),
   });
 
   const handleExecute = (e: React.FormEvent) => {
@@ -77,9 +72,8 @@ export const Playground: React.FC = () => {
     });
   };
 
-  // Parse result blocks
-  const resultData = queryMutation.data as MultiPlaygroundResponse | undefined;
-  const blocks = resultData?.results || [];
+  const resultData = queryMutation.data as PlaygroundResponse | undefined;
+  const blocks: PlaygroundConfigResult[] = resultData?.results || [];
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -149,9 +143,25 @@ export const Playground: React.FC = () => {
         {/* Configurations Picker (up to 3) */}
         <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-              Active Configurations to Compare (Up to 3)
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Active Configurations to Compare (Up to 3)
+              </span>
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-mono">
+                <span>k =</span>
+                <select
+                  value={kValue}
+                  onChange={(e) => setKValue(Number(e.target.value))}
+                  className="bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded px-1.5 py-0.5 text-xs"
+                >
+                  <option value={1}>1</option>
+                  <option value={3}>3</option>
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                </select>
+              </div>
+            </div>
+
             {configs.length < 3 && (
               <button
                 type="button"
@@ -227,7 +237,7 @@ export const Playground: React.FC = () => {
       {/* Side-by-Side Results Display */}
       {blocks.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blocks.map((block, bIdx) => (
+          {blocks.map((block: PlaygroundConfigResult, bIdx: number) => (
             <div
               key={bIdx}
               className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col overflow-hidden"
@@ -250,7 +260,7 @@ export const Playground: React.FC = () => {
 
               {/* Retrieved Chunks list */}
               <div className="flex-1 p-4 space-y-3 overflow-y-auto max-h-[600px]">
-                {block.results.map((chunk, cIdx) => (
+                {block.retrieved_chunks.map((chunk: RetrievedChunkDetail, cIdx: number) => (
                   <div
                     key={cIdx}
                     className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 text-xs space-y-2"

@@ -300,7 +300,7 @@ export const Review: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Lexical Overlap:</span>
                 <span className="font-mono font-medium">
-                  {currentQuestion.lexical_overlap_run} words run / {currentQuestion.lexical_overlap_jaccard.toFixed(3)} Jaccard
+                  {currentQuestion.lexical_overlap_run ?? 0} words run / {(currentQuestion.lexical_overlap_jaccard ?? 0).toFixed(3)} Jaccard
                 </span>
               </div>
               {currentQuestion.flagged_too_easy && (
