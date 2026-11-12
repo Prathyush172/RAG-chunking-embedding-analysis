@@ -13,6 +13,26 @@ defaults:
   exclude_front_matter: true   # leaves title block, abstract, TOC out of chunk list
 
 presets:
+  fast:
+    description: "Fast review run - 9 configurations with a smaller evaluation sample."
+    chunking_configs:
+      - strategy: fixed
+        chunk_tokens: 256
+        overlap_pct: 0.0
+        label: "fixed_256_0"
+
+      - strategy: sentence
+        chunk_tokens: 256
+        overlap_sentences: 0
+        label: "sent_256_0"
+
+      - strategy: semantic
+        max_tokens: 512
+        similarity_percentile: 25
+        min_tokens: 64
+        label: "semantic_default"
+
+    models: [minilm, bge_small, e5_small]
   quick:
     description: "Quick validation run — 9 configurations (3 chunkers × 3 models)."
     chunking_configs:

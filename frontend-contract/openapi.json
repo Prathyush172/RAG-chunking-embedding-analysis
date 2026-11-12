@@ -111,7 +111,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Get Document Text Api Corpus Documents  Doc Id  Text Get"
                 }
               }
@@ -155,7 +154,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Get Document Line Index Api Corpus Documents  Doc Id  Line Index Get"
                 }
               }
@@ -579,7 +577,6 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
                   "type": "object",
                   "title": "Response Import Questions Csv Api Questions Import Post"
                 }
@@ -760,7 +757,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Review Question Api Questions  Qid  Review Post"
                 }
               }
@@ -1122,7 +1118,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Get Experiment Log Api Experiments  Exp Id  Log Get"
                 }
               }
@@ -1390,7 +1385,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Get Experiment Per Doc Api Results  Exp Id  Per Doc Get"
                 }
               }
@@ -1443,7 +1437,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Inspect Question Across Runs Api Results  Exp Id  Questions  Qid  Get"
                 }
               }
@@ -1790,7 +1783,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Get Manifest Api Export  Exp Id  Manifest Get"
                 }
               }
@@ -1834,7 +1826,6 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": true,
                   "title": "Response Get Methodology Doc Api Export  Exp Id  Methodology Get"
                 }
               }
@@ -1960,7 +1951,6 @@
             "title": "Description"
           },
           "parameters": {
-            "additionalProperties": true,
             "type": "object",
             "title": "Parameters"
           }
@@ -2896,7 +2886,6 @@
           "gold_overlap": {
             "anyOf": [
               {
-                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -3037,7 +3026,6 @@
           "gold_overlap": {
             "anyOf": [
               {
-                "additionalProperties": true,
                 "type": "object"
               },
               {
@@ -4103,13 +4091,6 @@
           "type": {
             "type": "string",
             "title": "Error Type"
-          },
-          "input": {
-            "title": "Input"
-          },
-          "ctx": {
-            "type": "object",
-            "title": "Context"
           }
         },
         "type": "object",

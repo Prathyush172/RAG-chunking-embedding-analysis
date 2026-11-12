@@ -268,12 +268,19 @@ def cmd_run(args: argparse.Namespace) -> None:
     if verified_only:
         questions = [q for q in all_questions if q.verified]
         if not questions:
-            print("\n" + "!" * 80)
-            print("Error: 0 questions are verified. Cannot run with --verified-only.")
-            print("!" * 80)
+            print("\nError: No verified questions available.")
             sys.exit(1)
     else:
         questions = all_questions
+
+    # Fast review preset: use a reproducible sample of 12 questions.
+    if preset == "fast":
+        import random
+        rng = random.Random(42)
+        questions = sorted(
+            rng.sample(questions, min(12, len(questions))),
+            key=lambda q: q.id
+        )
 
     unverified_count = sum(1 for q in questions if not q.verified)
     has_unverified = unverified_count > 0
@@ -578,7 +585,7 @@ def main() -> None:
 
     # run
     p_run = subparsers.add_parser("run", help="Run comparative evaluation benchmark")
-    p_run.add_argument("--preset", choices=["quick", "full"], default="quick", help="Preset configuration")
+    p_run.add_argument("--preset", choices=["fast", "quick", "full"], default="quick", help="Preset configuration")
     p_run.add_argument("--verified-only", action="store_true", help="Evaluate only human-verified questions")
     p_run.add_argument("--k", type=int, default=5, help="Top-k retrieval cut-off")
 

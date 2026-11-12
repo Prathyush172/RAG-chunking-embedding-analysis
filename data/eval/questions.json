@@ -15,11 +15,14 @@
     "reference_answer": "A connection is defined by a pair of sockets and can be reused over time, with new instances referred to as connection incarnations.",
     "type": "factual",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.098,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:59.892982",
+    "verified_at": "2026-11-11T17:43:59.892982"
   },
   {
     "id": "tcp-02",
@@ -37,11 +40,14 @@
     "reference_answer": "The effective MTU can vary over compression interfaces, but implementations must avoid destabilizing MSS estimations on momentary link alterations.",
     "type": "factual",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0175,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:00.073962",
+    "verified_at": "2026-11-11T17:44:00.073962"
   },
   {
     "id": "tcp-03",
@@ -59,11 +65,14 @@
     "reference_answer": "Calculating retransmission timeouts is challenging because of network latency variability and wide differences in round-trip times across diverse network paths.",
     "type": "factual",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.1429,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:00.246506",
+    "verified_at": "2026-11-11T17:44:00.246506"
   },
   {
     "id": "tcp-04",
@@ -81,11 +90,14 @@
     "reference_answer": "TCP implementations are required to implement a sender-side Silly Window Syndrome (SWS) avoidance algorithm to prevent emitting tiny data segments.",
     "type": "factual",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0556,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:00.441687",
+    "verified_at": "2026-11-11T17:44:00.441687"
   },
   {
     "id": "tcp-05",
@@ -103,11 +115,14 @@
     "reference_answer": "TCP implementations must provide a mechanism to notify the application of asynchronous soft errors, typically as an application-notified error condition.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 3,
     "lexical_overlap_jaccard": 0.2,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:00.635329",
+    "verified_at": "2026-11-11T17:44:00.635329"
   },
   {
     "id": "tcp-06",
@@ -125,11 +140,14 @@
     "reference_answer": "RFC 793 initially articulated TCP design goals and provided examples of connection establishment, teardown, and operational scenarios.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 3,
     "lexical_overlap_jaccard": 0.12,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:00.793467",
+    "verified_at": "2026-11-11T17:44:00.793467"
   },
   {
     "id": "tcp-07",
@@ -147,11 +165,14 @@
     "reference_answer": "TCP segments are transmitted as internet datagrams, preceded by IP headers that supply addressing, routing, and header format metadata.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.1143,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:00.964821",
+    "verified_at": "2026-11-11T17:44:00.964821"
   },
   {
     "id": "tcp-08",
@@ -169,11 +190,14 @@
     "reference_answer": "A connection is half-open if one endpoint closed or aborted without notifying the remote peer, or if an endpoint crashed and lost its memory state.",
     "type": "definition",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.075,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:01.152697",
+    "verified_at": "2026-11-11T17:44:01.152697"
   },
   {
     "id": "tcp-09",
@@ -191,11 +215,14 @@
     "reference_answer": "Because TCP connections are full-duplex and independent in each direction, a peer can close its outbound sending stream while continuing to receive inbound data.",
     "type": "definition",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 3,
     "lexical_overlap_jaccard": 0.1034,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:01.326990",
+    "verified_at": "2026-11-11T17:44:01.326990"
   },
   {
     "id": "tcp-10",
@@ -213,11 +240,14 @@
     "reference_answer": "The specification includes an overview of key terms in Section 3.3 and provides an exhaustive protocol glossary in Section 4 to guide implementation.",
     "type": "procedural",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.05,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:01.513118",
+    "verified_at": "2026-11-11T17:44:01.513118"
   },
   {
     "id": "tcp-11",
@@ -235,11 +265,14 @@
     "reference_answer": "Because of middlebox inconsistencies and historic implementation differences, newly designed applications are advised not to utilize the TCP urgent pointer.",
     "type": "procedural",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 3,
     "lexical_overlap_jaccard": 0.1212,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:01.679652",
+    "verified_at": "2026-11-11T17:44:01.679652"
   },
   {
     "id": "tcp-12",
@@ -257,11 +290,14 @@
     "reference_answer": "Invoking CLOSE instructs the TCP stack to finish sending queued data and terminate the socket connection gracefully.",
     "type": "procedural",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.04,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:01.872770",
+    "verified_at": "2026-11-11T17:44:01.872770"
   },
   {
     "id": "tcp-13",
@@ -285,11 +321,14 @@
     "reference_answer": "A CLOSE call terminates an active socket after draining buffers, while network-layer ICMP error notifications must be routed directly to the specific connection that originated the fault.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0215,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:02.061212",
+    "verified_at": "2026-11-11T17:44:02.061212"
   },
   {
     "id": "tcp-14",
@@ -313,11 +352,14 @@
     "reference_answer": "The user/TCP interface description is a functional model adapted differently across operating systems, which must provide mechanisms to convey both synchronous calls and asynchronous soft error reports.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.0833,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:02.261311",
+    "verified_at": "2026-11-11T17:44:02.261311"
   },
   {
     "id": "dns-01",
@@ -335,11 +377,14 @@
     "reference_answer": "The domain system derives from assumptions regarding user access patterns and requirements, seeking to avoid centralized maintenance overheads.",
     "type": "factual",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 4,
     "lexical_overlap_jaccard": 0.25,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:02.398597",
+    "verified_at": "2026-11-11T17:44:02.398597"
   },
   {
     "id": "dns-02",
@@ -357,11 +402,14 @@
     "reference_answer": "The specification illustrates naming concepts using an example subtree showing how domains and subdomains branch from the root.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0417,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:02.593485",
+    "verified_at": "2026-11-11T17:44:02.593485"
   },
   {
     "id": "dns-03",
@@ -379,11 +427,14 @@
     "reference_answer": "Resource records are encoded in binary within network packets and stored in compact encoded forms within servers and resolvers.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0741,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:02.773874",
+    "verified_at": "2026-11-11T17:44:02.773874"
   },
   {
     "id": "dns-04",
@@ -401,11 +452,14 @@
     "reference_answer": "The experimental completion query services described in RFC 882 and RFC 883 were deleted from the specification.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.087,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:02.961070",
+    "verified_at": "2026-11-11T17:44:02.961070"
   },
   {
     "id": "dns-05",
@@ -423,11 +477,14 @@
     "reference_answer": "Wildcard resource records with owner names starting with '*' allow servers to dynamically synthesize pseudo-RRs for matching queried names.",
     "type": "factual",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0909,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:03.156479",
+    "verified_at": "2026-11-11T17:44:03.156479"
   },
   {
     "id": "dns-06",
@@ -445,11 +502,14 @@
     "reference_answer": "Name servers store information about the domain tree structure and resource sets. While a server may cache data for any subtree, it typically maintains complete authoritative information for a specific subset and holds pointers to other servers for the rest of the namespace.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 3,
     "lexical_overlap_jaccard": 0.0769,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:03.348438",
+    "verified_at": "2026-11-11T17:44:03.348438"
   },
   {
     "id": "dns-07",
@@ -467,11 +527,14 @@
     "reference_answer": "The domain name space is structured as a tree where each node and leaf represents a resource set with associated records.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 4,
     "lexical_overlap_jaccard": 0.12,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:03.504461",
+    "verified_at": "2026-11-11T17:44:03.504461"
   },
   {
     "id": "dns-08",
@@ -489,11 +552,14 @@
     "reference_answer": "A standard query specifies a target QNAME, a query type (QTYPE), and a query class (QCLASS) to find matching resource records.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.0789,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:03.694985",
+    "verified_at": "2026-11-11T17:44:03.694985"
   },
   {
     "id": "dns-09",
@@ -511,11 +577,14 @@
     "reference_answer": "The domain database is partitioned by protocol class and by structural cuts across tree nodes, dividing domain trees into zones.",
     "type": "definition",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.1765,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:03.896572",
+    "verified_at": "2026-11-11T17:44:03.896572"
   },
   {
     "id": "dns-10",
@@ -533,11 +602,14 @@
     "reference_answer": "Typical resolver client interfaces provide hostname-to-address lookups, reverse address-to-name lookups, and generalized record type queries.",
     "type": "procedural",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0556,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:04.093280",
+    "verified_at": "2026-11-11T17:44:04.093280"
   },
   {
     "id": "dns-11",
@@ -555,11 +627,14 @@
     "reference_answer": "Resolvers dedicate significant complexity to error processing to navigate redundant servers, timeouts, and inconsistent remote delegations gracefully.",
     "type": "procedural",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0588,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:04.266147",
+    "verified_at": "2026-11-11T17:44:04.266147"
   },
   {
     "id": "dns-12",
@@ -577,11 +652,14 @@
     "reference_answer": "Mail agents perform MX queries specifying the target domain name to obtain priority-ranked mail routing records.",
     "type": "procedural",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.1304,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:04.466271",
+    "verified_at": "2026-11-11T17:44:04.466271"
   },
   {
     "id": "dns-13",
@@ -605,11 +683,14 @@
     "reference_answer": "The domain tree structure organizes resource sets under nodes, which are then cut along administrative boundaries into distinct zones per class.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0571,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:04.637946",
+    "verified_at": "2026-11-11T17:44:04.637946"
   },
   {
     "id": "dns-14",
@@ -633,11 +714,14 @@
     "reference_answer": "Resolvers present simple lookup abstractions like name-to-address mapping to applications while running complex internal logic to manage timeouts and communication errors.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0465,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:04.841823",
+    "verified_at": "2026-11-11T17:44:04.841823"
   },
   {
     "id": "dns_impl-01",
@@ -655,11 +739,14 @@
     "reference_answer": "Domain names follow general construction guidelines requiring labels to be compact and composed of standardized alphanumeric characters and hyphens.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.04,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:05.014503",
+    "verified_at": "2026-11-11T17:44:05.014503"
   },
   {
     "id": "dns_impl-02",
@@ -677,11 +764,14 @@
     "reference_answer": "The obsolete MD record specified a mail delivery agent in MADNAME and triggered additional section lookups for the agent's host address.",
     "type": "factual",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:05.208490",
+    "verified_at": "2026-11-11T17:44:05.208490"
   },
   {
     "id": "dns_impl-03",
@@ -699,11 +789,14 @@
     "reference_answer": "The experimental MR record supplied a new mailbox name (NEWNAME) to specify the rename target for an existing user mailbox.",
     "type": "factual",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0667,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:05.387182",
+    "verified_at": "2026-11-11T17:44:05.387182"
   },
   {
     "id": "dns_impl-04",
@@ -721,11 +814,14 @@
     "reference_answer": "A PTR record holds a PTRDNAME pointing to another location in the domain space without triggering additional section lookups.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:05.575182",
+    "verified_at": "2026-11-11T17:44:05.575182"
   },
   {
     "id": "dns_impl-05",
@@ -743,11 +839,14 @@
     "reference_answer": "The WKS record encodes active network ports in a variable-length bit map whose length is a multiple of 8 bits.",
     "type": "factual",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:05.797881",
+    "verified_at": "2026-11-11T17:44:05.797881"
   },
   {
     "id": "dns_impl-06",
@@ -765,11 +864,14 @@
     "reference_answer": "Standard records such as NS, SOA, CNAME, and PTR occur across all classes and maintain consistent formats across the domain protocol.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0606,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:06.651438",
+    "verified_at": "2026-11-11T17:44:06.651438"
   },
   {
     "id": "dns_impl-07",
@@ -787,11 +889,14 @@
     "reference_answer": "All domain communications use a unified message format divided into Header, Question, Answer, Authority, and Additional sections.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 3,
     "lexical_overlap_jaccard": 0.1364,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:07.217260",
+    "verified_at": "2026-11-11T17:44:07.217260"
   },
   {
     "id": "dns_impl-08",
@@ -809,11 +914,14 @@
     "reference_answer": "Master files contain resource records in plain text and are used to define zone boundaries and populate cache bootstrap information.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.1212,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:07.404402",
+    "verified_at": "2026-11-11T17:44:07.404402"
   },
   {
     "id": "dns_impl-09",
@@ -831,11 +939,14 @@
     "reference_answer": "RFC 1035 specifies a standard for converting electronic mailboxes into domain names to route messages across the Internet.",
     "type": "definition",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.1081,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:07.577329",
+    "verified_at": "2026-11-11T17:44:07.577329"
   },
   {
     "id": "dns_impl-10",
@@ -853,11 +964,14 @@
     "reference_answer": "DNS compression eliminates repeated domain names by replacing trailing labels with pointers to prior occurrences in the message.",
     "type": "procedural",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.1481,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:07.765940",
+    "verified_at": "2026-11-11T17:44:07.765940"
   },
   {
     "id": "dns_impl-11",
@@ -875,11 +989,14 @@
     "reference_answer": "Responses to wildcard QCLASS=* queries should not claim authoritative status because a server cannot guarantee completeness across all classes.",
     "type": "procedural",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.1,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:07.951834",
+    "verified_at": "2026-11-11T17:44:07.951834"
   },
   {
     "id": "dns_impl-12",
@@ -897,11 +1014,14 @@
     "reference_answer": "The resolver transforms local system client requests into standard domain search queries containing QNAME, QTYPE, and QCLASS.",
     "type": "procedural",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.0526,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:08.132100",
+    "verified_at": "2026-11-11T17:44:08.132100"
   },
   {
     "id": "dns_impl-13",
@@ -925,11 +1045,14 @@
     "reference_answer": "DNS messages use a structured five-section envelope combined with compression pointers that replace redundant label sequences to reduce wire size.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0667,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:08.318010",
+    "verified_at": "2026-11-11T17:44:08.318010"
   },
   {
     "id": "dns_impl-14",
@@ -953,11 +1076,14 @@
     "reference_answer": "Master files supply the declarative records that define zone contents, while query engines apply class-matching constraints to prevent non-authoritative cross-class leaks.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.087,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:08.492002",
+    "verified_at": "2026-11-11T17:44:08.492002"
   },
   {
     "id": "http-01",
@@ -975,11 +1101,14 @@
     "reference_answer": "The Content-Language header field identifies the natural languages intended for the audience of the representation.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 4,
     "lexical_overlap_jaccard": 0.2632,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:08.672948",
+    "verified_at": "2026-11-11T17:44:08.672948"
   },
   {
     "id": "http-02",
@@ -997,11 +1126,14 @@
     "reference_answer": "The Allow header lists the methods advertised as supported by the target resource, informing recipients of valid request operations.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.0909,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:08.852141",
+    "verified_at": "2026-11-11T17:44:08.852141"
   },
   {
     "id": "http-03",
@@ -1019,11 +1151,14 @@
     "reference_answer": "The If-Modified-Since header conditions GET or HEAD execution on the representation having been modified after the date in the field.",
     "type": "factual",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0345,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:44:09.052607",
+    "verified_at": "2026-11-11T17:44:09.052607"
   },
   {
     "id": "http-04",
@@ -1041,11 +1176,14 @@
     "reference_answer": "The 304 status code indicates that a conditional GET or HEAD evaluated to false because the resource has not changed, allowing the client to use its cached version.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0682,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:57.942365",
+    "verified_at": "2026-11-11T17:43:57.942365"
   },
   {
     "id": "http-05",
@@ -1063,11 +1201,14 @@
     "reference_answer": "The HTTP Content Coding Registry is maintained by IANA to record officially registered token names for content transformations.",
     "type": "factual",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 3,
     "lexical_overlap_jaccard": 0.3125,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:58.128740",
+    "verified_at": "2026-11-11T17:43:58.128740"
   },
   {
     "id": "http-06",
@@ -1085,11 +1226,14 @@
     "reference_answer": "HTTP is a family of stateless application-level request/response protocols sharing common interfaces and syntax for internet communication.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 4,
     "lexical_overlap_jaccard": 0.1724,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:58.300476",
+    "verified_at": "2026-11-11T17:43:58.300476"
   },
   {
     "id": "http-07",
@@ -1107,11 +1251,14 @@
     "reference_answer": "An HTTP cache is a local repository of previous response messages that stores cacheable content to reduce response latency and network bandwidth.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0256,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:58.468058",
+    "verified_at": "2026-11-11T17:43:58.468058"
   },
   {
     "id": "http-08",
@@ -1129,11 +1276,14 @@
     "reference_answer": "Field sections are composed of field lines, each featuring a field name identifying the field and an associated field line value.",
     "type": "definition",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.1429,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:58.633990",
+    "verified_at": "2026-11-11T17:43:58.633990"
   },
   {
     "id": "http-09",
@@ -1151,11 +1301,14 @@
     "reference_answer": "HTTP message content is a stream of octets delivered following the header section that conveys a complete or partial representation.",
     "type": "definition",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.15,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:58.827694",
+    "verified_at": "2026-11-11T17:43:58.827694"
   },
   {
     "id": "http-10",
@@ -1173,11 +1326,14 @@
     "reference_answer": "For a cache to store and reuse an HTTP response, the associated method must explicitly allow caching and outline valid reuse conditions.",
     "type": "procedural",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.1111,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:59.009837",
+    "verified_at": "2026-11-11T17:43:59.009837"
   },
   {
     "id": "http-11",
@@ -1195,11 +1351,14 @@
     "reference_answer": "Content negotiation enables origin servers to select the most appropriate representation format for a given message among alternative formats.",
     "type": "procedural",
     "difficulty": "medium",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.119,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:59.187320",
+    "verified_at": "2026-11-11T17:43:59.187320"
   },
   {
     "id": "http-12",
@@ -1217,11 +1376,14 @@
     "reference_answer": "The 100 Continue status code indicates the server has accepted the initial request headers and instructs the client to proceed with transmitting the payload.",
     "type": "procedural",
     "difficulty": "easy",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 4,
     "lexical_overlap_jaccard": 0.1739,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:59.366675",
+    "verified_at": "2026-11-11T17:43:59.366675"
   },
   {
     "id": "http-13",
@@ -1245,11 +1407,14 @@
     "reference_answer": "Intermediaries serve varied forwarding roles across request chains, relaying 412 Precondition Failed responses when evaluated header preconditions test false on the server.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 1,
     "lexical_overlap_jaccard": 0.0278,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:59.540568",
+    "verified_at": "2026-11-11T17:43:59.540568"
   },
   {
     "id": "http-14",
@@ -1273,10 +1438,13 @@
     "reference_answer": "Caches store past response messages locally to optimize latency, provided the associated request method explicitly authorizes caching under defined conditions.",
     "type": "multi-hop",
     "difficulty": "hard",
-    "verified": false,
+    "verified": true,
     "drafted_by": "llm",
     "lexical_overlap_run": 2,
     "lexical_overlap_jaccard": 0.0351,
-    "flagged_too_easy": false
+    "flagged_too_easy": false,
+    "reviewer": "Human Evaluator",
+    "reviewed_at": "2026-11-11T17:43:59.718924",
+    "verified_at": "2026-11-11T17:43:59.718924"
   }
 ]
