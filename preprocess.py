@@ -3,7 +3,6 @@ preprocess.py — RFC text cleaning pipeline.
 
 Cleans raw RFC plain-text files from datasets/ and writes output to data/clean/.
 The cleaned text is the single source of truth for all character offsets.
-
 Cleaning steps (applied in order):
 1. Replace form feed characters (\\x0c) with newlines.
 2. Remove page footer lines: ^\S.*\[Page \d+\]\s*$
